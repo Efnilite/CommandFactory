@@ -1,0 +1,10 @@
+name: CommandFactory
+author: Efnilite
+description: Add commands within seconds
+main: dev.efnilite.commandfactory.CommandFactory
+version: 1.3.2
+api-version: 1.16
+commands:
+    commandfactory:
+        aliases: [cf, commandf, factory]
+        description: The main command of CommandFactory

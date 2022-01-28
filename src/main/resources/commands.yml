@@ -1,0 +1,72 @@
+# ---------------------------------- How to create a command -------------------------------
+#
+## Simple commands
+# For simple commands, use /eth add <alias> <command>
+# Example: /eth add gmc gamemode creative
+#
+## Editing commands here
+#
+# command: '/example' - The command that gets executed when a person enters one of the aliases. You can use %player% to get the player. (required)
+# aliases: '/exam' - The aliases which execute the main command (required)
+# permission: 'example.use' - The permission required to execute the aliases (optional)
+# permission-message: '&cNo perms!' - The message someone get if they don't have enough permissions (optional)
+# executable-by: 'player' - Who can execute this command? Valid values are: 'console', 'player', 'both' (optional)
+# executable-by-message: 'Silly console.' - The message someone gets if they aren't able to execute this command (optional)
+# cooldown: '2d 1h 3m 10s 360ms' - The cooldown to execute this command. (optional)
+# Make sure to have spaces between times. Days, hours, minutes, seconds and milliseconds are accepted.
+# cooldown-message: 'You have to wait %time% until you can do that again!' - The message if the cooldown isn't over yet. (optional)
+# %time% is the time remaining and %cooldown% is the total time the cooldown lasts.
+#
+# If you have a long command with "", you can surround the command  with '' (hyphens), example: '/tellraw @a "hello! :)"'
+#
+#-------------------------------- Interchangeable arguments --------------------------------
+#
+# You can name an argument, like '%arg 1%', and use that in the main command.
+## Example:
+## command: '/tp %arg 1% ~ ~%arg 2% ~'
+## aliases: '/up %arg 1% %arg 2%'
+# You can also use '%player 1%' or '%whatever-1%' instead of '%arg 1%'.
+# The only thing that should match with the correct position is the number.
+# So '%something 1%' will always replace the first thing which it can replace in the main command.
+## Example:
+## command: '/test %argument 2% %argument 1%'
+## aliases: '/t %arg 1% %arg 2%'
+# In the main command, '%argument 2%' will be set to the value entered in '%arg 2%'
+#
+#-------------------------------------------------------------------------------------------
+#
+##! Be sure to use /eth reload after adding commands here to update the in-game register!
+##! Overwriting plugin commands may cause issues with that plugin!
+##! Cooldowns are reset on server restart!
+##! More help is available at the wiki: https://efnilite.github.io/efnilite.dev/wiki/ethereal
+#
+#-------------------------------------------------------------------------------------------
+
+commands:
+    1:
+        command: '/example'
+        aliases: '/exam'
+        permission: 'example.use'
+        permission-message: '&c&l> &cNo perms!'
+        executable-by: 'player'
+        executable-by-message: '&c&l> &7Silly console.'
+        cooldown: '2d 1h 3m 10s 360ms'
+        cooldown-message: '&c&l> &7You have to wait %time% until you can do that again!'
+    2:
+        command: '/ethereal'
+        aliases: '/ethrl, /commandalias, /calias, /alias'
+    3:
+        command: '/summon villager ~ ~1 ~ {VillagerData:{profession:butcher,level:4,type:desert},PersistenceRequired:1,CustomName:""Example"",ActiveEffects:[{Id:12,Amplifier:0,Duration:999999},{Id:17,Amplifier:0,Duration:999999}],Offers:{Recipes:[{buy:{id:emerald,Count:14},sell:{id:acacia_boat,Count:1},rewardExp:0b,maxUses:9999999}]}}'
+        aliases: '/summonanamazingvillager' # Example with a long command including ""
+        executable-by: 'player'
+        cooldown: '30m'
+    4:
+        command: '/tp %arg 1% ~ ~%arg 2% ~'
+        aliases: '/upother %arg 1% %arg 2%, /upo %arg 1% %arg 2%'
+        permission: 'eth.up.other'
+    5:
+        command: '/tp @p ~ ~%arg 1% ~'
+        aliases: '/up %argument-1%'
+        permission: 'eth.up'
+        executable-by: 'player'
+        cooldown: '10s'

@@ -1,0 +1,6 @@
+Visit the wiki
+
+v1.3.1
+- Update cooldown message to be more readable
+- Move to fyCore architecture
+    > This should make the plugin more reliable.

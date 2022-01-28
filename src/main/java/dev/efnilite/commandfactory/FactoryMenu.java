@@ -1,18 +1,16 @@
 package dev.efnilite.commandfactory;
 
+import dev.efnilite.commandfactory.command.Executor;
 import dev.efnilite.commandfactory.command.RegisterNotification;
+import dev.efnilite.commandfactory.command.plugin.FCommand;
 import dev.efnilite.commandfactory.command.wrapper.AliasedCommand;
-import dev.efnilite.commandfactory.command.FCommand;
-import dev.efnilite.commandfactory.util.PagedMenu;
 import dev.efnilite.commandfactory.util.Util;
 import dev.efnilite.commandfactory.util.config.Option;
 import dev.efnilite.fycore.chat.ChatAnswer;
 import dev.efnilite.fycore.config.ConfigOption;
 import dev.efnilite.fycore.inventory.Menu;
-import dev.efnilite.fycore.inventory.animation.RandomAnimation;
-import dev.efnilite.fycore.inventory.animation.SnakeSingleAnimation;
-import dev.efnilite.fycore.inventory.animation.SplitMiddleOutAnimation;
-import dev.efnilite.fycore.inventory.animation.WaveEastAnimation;
+import dev.efnilite.fycore.inventory.PagedMenu;
+import dev.efnilite.fycore.inventory.animation.*;
 import dev.efnilite.fycore.inventory.item.Item;
 import dev.efnilite.fycore.inventory.item.MenuItem;
 import dev.efnilite.fycore.inventory.item.SliderItem;
@@ -26,12 +24,10 @@ import org.jetbrains.annotations.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class FactoryMenu {
-
-    // todo PAGEDMENUS FIX pages not updating on switch
-    // todo FIX DELETION NOT WORKING
 
     public static void openMain(Player player) {
         PagedMenu mainMenu = new PagedMenu(4, "&fCommands");
@@ -47,9 +43,9 @@ public class FactoryMenu {
                 displayRows(0, 1)
                 .addToDisplay(commands)
 
-                .nextPage(35, new Item(Material.EMERALD_BLOCK, "&a&lNext page")
+                .nextPage(35, new Item(Material.LIME_DYE, "&a&lNext page")
                         .click((menu, event) -> mainMenu.page(1)))
-                .prevPage(27, new Item(Material.REDSTONE_BLOCK, "&c&lPrevious page")
+                .prevPage(27, new Item(Material.RED_DYE, "&c&lPrevious page")
                         .click((menu, event) -> mainMenu.page(-1)))
 
                 .item(30, new Item(Material.PAPER, "&#2055B8&lNew command")
@@ -163,7 +159,7 @@ public class FactoryMenu {
                                 .cancel((pl) -> openEditor(pl, alias))))
 
                 .item(12, new Item(Material.CLOCK, "&#91AEE2&lCooldown")
-                        .lore("&#7285A9Currently&7: " + formatDuration(command.parseCooldown()), "&7Set the cooldown.")
+                        .lore("&#7285A9Currently&7: " + formatDuration(command.getCooldownMs()), "&7Set the cooldown.")
                         .click((menu, event) -> openCooldown(player, alias)))
 
                 .item(13, new Item(Material.GOLDEN_HORSE_ARMOR, "&#91AEE2&lCooldown message")
@@ -177,6 +173,25 @@ public class FactoryMenu {
                                 })
                                 .post((pl, msg) -> {
                                     CommandFactory.getProcessor().editPermissionMessage(alias, msg);
+                                    openEditor(pl, alias);
+                                })
+                                .cancel((pl) -> openEditor(pl, alias))))
+
+                .item(14, new Item(Material.PLAYER_HEAD, "&#91AEE2&lExecutor")
+                        .lore("&#7285A9Currently&7: " + command.getExecutableBy().name().toLowerCase(), "&7Set who can execute this command.")
+                        .click((menu, event) -> openExecutor(player, alias)))
+
+                .item(15, new Item(Material.DIAMOND_HORSE_ARMOR, "&#91AEE2&lExecutor message")
+                        .lore("&#7285A9Currently&7: " + orNothing(command.getExecutableByMessage()), "&7Set the executor message by typing it.",
+                                "&7This is the message players/console get when", "&7they can't execute this command.")
+                        .click((menu, event) -> new ChatAnswer(player, "cancel")
+                                .pre((pl) -> {
+                                    Util.send(pl, FCommand.MESSAGE_PREFIX + "Please enter an executor message. " +
+                                            "Use '&' for colours. Hex colours are supported ('&#abcde'). Type 'cancel' to cancel.");
+                                    pl.closeInventory();
+                                })
+                                .post((pl, msg) -> {
+                                    CommandFactory.getProcessor().editExecutableByMessage(alias, msg);
                                     openEditor(pl, alias);
                                 })
                                 .cancel((pl) -> openEditor(pl, alias))))
@@ -202,6 +217,52 @@ public class FactoryMenu {
                 .open(player);
     }
 
+    private static void openExecutor(Player player, String alias) {
+        AliasedCommand command = CommandFactory.getProcessor().get(alias);
+
+        if (command == null) {
+            return;
+        }
+
+        Executor executor = command.getExecutableBy();
+        AtomicBoolean players = new AtomicBoolean();
+        AtomicBoolean console = new AtomicBoolean();
+
+        new Menu(3, "&fExecutor of " + alias)
+                .distributeRowEvenly(1)
+
+                .item(9, new SliderItem()
+                        .initial(executor == Executor.PLAYER || executor == Executor.BOTH ? 0 : 1)
+                        .add(0, new Item(Material.LIME_STAINED_GLASS_PANE, "&a&lPlayers")
+                                .lore("&7Players can execute this command"), (menu, event) -> players.set(true))
+                        .add(1, new Item(Material.RED_STAINED_GLASS_PANE, "&c&lPlayers")
+                                .lore("&7Players can't execute this command"), (menu, event) -> players.set(false)))
+
+                .item(10, new SliderItem()
+                        .initial(executor == Executor.CONSOLE || executor == Executor.BOTH ? 0 : 1)
+                        .add(0, new Item(Material.LIME_STAINED_GLASS_PANE, "&a&lConsole")
+                                .lore("&7Console can execute this command"), (menu, event) -> console.set(true))
+                        .add(1, new Item(Material.RED_STAINED_GLASS_PANE, "&c&lConsole")
+                                .lore("&7Console can't execute this command"), (menu, event) -> console.set(false)))
+
+                .item(26, new Item(Material.WRITABLE_BOOK, "&#2FBE6A&lSave changes")
+                        .lore("&7Click to confirm.")
+                        .click((menu, event) -> {
+                            if (players.get() && console.get()) {
+                                CommandFactory.getProcessor().editExecutableBy(alias, Executor.BOTH);
+                            } else if (players.get()) {
+                                CommandFactory.getProcessor().editExecutableBy(alias, Executor.PLAYER);
+                            } else if (console.get()) {
+                                CommandFactory.getProcessor().editExecutableBy(alias, Executor.CONSOLE);
+                            }
+                            openEditor(player, alias);
+                        }))
+
+                .animation(new SplitMiddleInAnimation())
+                .fillBackground(Material.LIGHT_GRAY_STAINED_GLASS_PANE)
+                .open(player);
+    }
+
     private static void openCooldown(Player player, String alias) {
         AliasedCommand command = CommandFactory.getProcessor().get(alias);
 
@@ -209,7 +270,7 @@ public class FactoryMenu {
             return;
         }
 
-        long cooldown = command.parseCooldown();
+        long cooldown = command.getCooldownMs();
         Item save = new Item(Material.WRITABLE_BOOK, "&#2FBE6A&lSave changes")
                 .lore("&aCurrent total&7: " + formatDuration(cooldown), "&7Click to confirm.");
 
@@ -301,7 +362,7 @@ public class FactoryMenu {
                 .item(26, save
                         .click((menu, event) -> {
                             openEditor(player, alias);
-                            command.setCooldownMs(getDuration(days, hours, mins, secs, ms));
+                            CommandFactory.getProcessor().editCooldown(alias, getDuration(days, hours, mins, secs, ms));
                         }))
                 .distributeRowEvenly(1)
                 .fillBackground(Material.CYAN_STAINED_GLASS_PANE)

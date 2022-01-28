@@ -1,7 +1,7 @@
 package dev.efnilite.commandfactory;
 
 import dev.efnilite.commandfactory.command.CommandProcessor;
-import dev.efnilite.commandfactory.command.FCommand;
+import dev.efnilite.commandfactory.command.plugin.FCommand;
 import dev.efnilite.commandfactory.util.UpdateChecker;
 import dev.efnilite.commandfactory.util.config.Configuration;
 import dev.efnilite.commandfactory.util.config.Option;

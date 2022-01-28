@@ -1,6 +1,6 @@
 package dev.efnilite.commandfactory;
 
-import dev.efnilite.commandfactory.command.FCommand;
+import dev.efnilite.commandfactory.command.plugin.FCommand;
 import dev.efnilite.commandfactory.util.Util;
 import dev.efnilite.fycore.event.EventWatcher;
 import dev.efnilite.fycore.util.Version;

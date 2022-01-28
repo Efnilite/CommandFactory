@@ -1,8 +1,10 @@
 package dev.efnilite.commandfactory.command;
 
 import dev.efnilite.commandfactory.CommandFactory;
+import dev.efnilite.commandfactory.command.plugin.FCommand;
 import dev.efnilite.commandfactory.command.wrapper.AliasedCommand;
 import dev.efnilite.commandfactory.command.wrapper.BukkitCommand;
+import dev.efnilite.commandfactory.util.CommandReflections;
 import dev.efnilite.commandfactory.util.Util;
 import dev.efnilite.fycore.util.Logging;
 import dev.efnilite.fycore.util.Task;
@@ -14,7 +16,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,19 +40,7 @@ public final class CommandProcessor implements CommandExecutor {
         this.pluginRegister = new HashMap<>();
         this.digitRegister = new HashMap<>();
         this.lastExecuted = new HashMap<>();
-        retrieveMap();
-    }
-
-    private void retrieveMap() {
-        try {
-            Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
-            field.setAccessible(true);
-            this.map = (SimpleCommandMap) field.get(Bukkit.getServer());
-        } catch (NoSuchFieldException | IllegalAccessException ex) {
-            Logging.error("Error while trying to access the command map.");
-            Logging.error("Commands will not show up on completion.");
-            ex.printStackTrace();
-        }
+        this.map = CommandReflections.retrieveMap();
     }
 
     public @Nullable RegisterNotification register(String aliasesRaw, String mainCommand) {
@@ -92,7 +81,7 @@ public final class CommandProcessor implements CommandExecutor {
             Logging.error("Please check if you have added a 'aliases:' section to your command.");
             return RegisterNotification.ARGUMENT_NULL;
         }
-        retrieveMap();
+        this.map = CommandReflections.retrieveMap(); // update map
 
         Logging.verbose("Registering command " + mainCommand + " under alias(es) " + aliasesRaw);
 
@@ -129,6 +118,7 @@ public final class CommandProcessor implements CommandExecutor {
                 }
             } else { // /xy
                 Command previous = registerToMap(alias, command);
+
                 if (previous != null) {
                     notification = RegisterNotification.OVERRIDING_EXISTING;
                     command.setNotification(RegisterNotification.OVERRIDING_EXISTING);
@@ -209,32 +199,17 @@ public final class CommandProcessor implements CommandExecutor {
     public @Nullable Command registerToMap(String alias, AliasedCommand command) {
         alias = alias.replaceFirst("/", "");
 
-        Command previous = null;
-        try {
-            BukkitCommand pluginCommand = new BukkitCommand(alias, this);
+        BukkitCommand pluginCommand = new BukkitCommand(alias, this);
 
-            if (command.getPermission() != null) {
-                pluginCommand.setPermission(command.getPermission());
-            }
-            if (command.getPermissionMessage() != null) {
-                pluginCommand.setPermissionMessage(command.getPermissionMessage());
-            }
-            pluginRegister.put(alias, pluginCommand);
-
-            Field field = SimpleCommandMap.class.getDeclaredField("knownCommands");
-            field.setAccessible(true);
-            Map<String, Command> knownCommands = (Map<String, Command>) field.get(map);
-            Command prev1 = knownCommands.put("cf:" + alias, pluginCommand);
-            Command prev2 = knownCommands.put(alias, pluginCommand);
-            previous = prev1 == null ? prev2 : prev1;
-
-            field.set(map, knownCommands);
-        } catch (IllegalAccessException  | NoSuchFieldException ex) {
-            ex.printStackTrace();
-            Logging.error("There was an error while trying to register your command to the Command Map");
-            Logging.error("It might not show up in-game in the auto-complete, but it does work.");
+        if (command.getPermission() != null) {
+            pluginCommand.setPermission(command.getPermission());
         }
-        return previous;
+        if (command.getPermissionMessage() != null) {
+            pluginCommand.setPermissionMessage(command.getPermissionMessage());
+        }
+        pluginRegister.put(alias, pluginCommand);
+
+        return CommandReflections.addToKnown(alias, pluginCommand, map);
     }
 
     /**
@@ -303,14 +278,14 @@ public final class CommandProcessor implements CommandExecutor {
         Logging.verbose("Processing " + command.getMainCommand());
 
         if (command.getExecutableBy() != null) {
-            String executor = command.getExecutableBy().toLowerCase();
-            if (executor.equals("console") && !(sender instanceof ConsoleCommandSender)) { // if only console can execute & sender is not console
+            Executor executor = command.getExecutableBy();
+            if (executor == Executor.CONSOLE && !(sender instanceof ConsoleCommandSender)) { // if only console can execute & sender is not console
                 if (command.getExecutableByMessage() != null) {
                     sender.sendMessage(Util.colour(command.getExecutableByMessage()));
                 }
                 return;
             }
-            if (executor.equals("player") && !(sender instanceof Player)) {
+            if (executor == Executor.PLAYER && !(sender instanceof Player)) {
                 if (command.getExecutableByMessage() != null) {
                     sender.sendMessage(Util.colour(command.getExecutableByMessage()));
                 }
@@ -335,7 +310,7 @@ public final class CommandProcessor implements CommandExecutor {
                 Long lastExecution = lastPlayer.get(original);
                 if (lastExecution != null) {
                     long lastUsedAgo = System.currentTimeMillis() - lastExecution; // 100 - 90
-                    long cooldown = command.parseCooldown();
+                    long cooldown = command.getCooldownMs();
                     if (lastUsedAgo < cooldown) { // 101 < 100??
                         if (command.getCooldownMessage() != null) {
                             sender.sendMessage(Util.colour(command.getCooldownMessage()
@@ -427,23 +402,24 @@ public final class CommandProcessor implements CommandExecutor {
      * @param   alias
      *          The alias
      *
-     * @param   executableBy
+     * @param   executor
      *          The executor
      *
      * @return true if the command is found, false if not
      */
-    public boolean editExecutableBy(String alias, @NotNull String executableBy) {
+    public boolean editExecutableBy(String alias, Executor executor) {
         AliasedCommand command = register.get(alias);
         if (command == null) {
             return false;
         }
 
-        Logging.verbose("Executor of " + alias + " changed to " + executableBy);
-        command.setExecutableBy(executableBy);
+        String name = executor.name().toLowerCase();
+        Logging.verbose("Executor of " + alias + " changed to " + name);
+        command.setExecutableBy(executor);
         register.put(alias, command); // update local
 
         String id = digitRegister.get(alias);
-        commands.set("commands." + id + ".executable-by", executableBy); // update file
+        commands.set("commands." + id + ".executable-by", name); // update file
         saveAsync();
         return true;
     }
@@ -472,6 +448,35 @@ public final class CommandProcessor implements CommandExecutor {
 
         String id = digitRegister.get(alias);
         commands.set("commands." + id + ".executable-by-message", message); // update file
+        saveAsync();
+        return true;
+    }
+
+    /**
+     * Edits the cooldown.
+     *
+     * @param   alias
+     *          The alias
+     *
+     * @param   ms
+     *          The cooldown in millis
+     *
+     * @return true if the command is found, false if not
+     */
+    public boolean editCooldown(String alias, long ms) {
+        AliasedCommand command = register.get(alias);
+        if (command == null) {
+            return false;
+        }
+
+        command.setCooldownMs(ms);
+        String cooldown = command.getCooldownString();
+
+        Logging.verbose("Cooldown of " + alias + " changed to " + cooldown);
+        register.put(alias, command); // update local
+
+        String id = digitRegister.get(alias);
+        commands.set("commands." + id + ".cooldown", cooldown); // update file
         saveAsync();
         return true;
     }

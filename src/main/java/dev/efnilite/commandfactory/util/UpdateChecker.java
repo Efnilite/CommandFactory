@@ -39,7 +39,7 @@ public class UpdateChecker {
         InputStream stream;
         Logging.info("Checking for updates...");
         try {
-            stream = new URL("https://raw.githubusercontent.com/Efnilite/Ethereal/master/src/main/resources/plugin.yml").openStream();
+            stream = new URL("https://raw.githubusercontent.com/Efnilite/CommandFactory/master/src/main/resources/plugin.yml").openStream();
         } catch (IOException e) {
             Logging.info("Unable to check for updates!");
             return "";

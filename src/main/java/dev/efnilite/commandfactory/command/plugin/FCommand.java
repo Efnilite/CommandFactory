@@ -1,4 +1,4 @@
-package dev.efnilite.commandfactory.command;
+package dev.efnilite.commandfactory.command.plugin;
 
 import dev.efnilite.commandfactory.CommandFactory;
 import dev.efnilite.commandfactory.FactoryMenu;
@@ -9,7 +9,9 @@ import dev.efnilite.fycore.util.Time;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class FCommand extends FyCommand {
 
@@ -41,8 +43,9 @@ public class FCommand extends FyCommand {
             switch (args[0].toLowerCase()) {
                 case "add":
                     if (sender instanceof Player && sender.hasPermission("cf.edit")) {
-
+                        FactoryMenu.initNew((Player) sender);
                     }
+                    return true;
                 case "edit":
                 case "menu":
                     if (sender instanceof Player && sender.hasPermission("cf.edit")) {
@@ -98,13 +101,6 @@ public class FCommand extends FyCommand {
                     Util.send(sender, MESSAGE_PREFIX + "Unknown command. Trying to register a command? Example: /cf add gmc gamemode creative");
                     return true;
             }
-        } else {
-            switch (args[0].toLowerCase()) {
-                case "add":
-                    if (!sender.hasPermission("cf.edit")) {
-                        return true;
-                    }
-            }
         }
         return true;
     }
@@ -123,29 +119,6 @@ public class FCommand extends FyCommand {
                 completions.add("resetcooldowns");
             }
             return completions(args[0], completions);
-
-        } else if (args.length == 2) {
-            if (args[0].equals("edit")) {
-                completions.addAll(Arrays.asList("maincommand", "permission", "permissionmessage", "executableby", "executablebymessage", "cooldownmessage"));
-            } else if (args[0].equals("remove")) {
-                completions.addAll(factory.getAliases());
-            }
-            return completions(args[1], completions);
-
-        } else if (args.length == 3) {
-            if (args[0].equals("edit")) {
-                completions.addAll(factory.getAliases());
-            }
-            return completions(args[2], completions);
-
-        } else if (args.length == 4) {
-            if (args[0].equals("edit")) {
-                if (args[1].equals("executableby")) {
-                    completions.addAll(Arrays.asList("player", "console", "both"));
-                }
-            }
-            return completions(args[3], completions);
-
         } else {
             return Collections.emptyList();
         }

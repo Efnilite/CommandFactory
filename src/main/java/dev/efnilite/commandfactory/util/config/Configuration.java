@@ -123,8 +123,7 @@ public class Configuration {
      *
      * @return a coloured string
      */
-    public @Nullable
-    List<String> getStringList(String file, String path) {
+    public @Nullable List<String> getStringList(String file, String path) {
         List<String> string = getFile(file).getStringList(path);
         if (string.size() == 0) {
             return null;

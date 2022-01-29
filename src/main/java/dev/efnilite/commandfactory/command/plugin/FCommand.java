@@ -23,14 +23,14 @@ public class FCommand extends FyCommand {
         if (args.length == 0) {
             Util.send(sender, "&8&m-----------&r &#711FDE&lCommandFactory &8&m-----------");
             Util.send(sender, "&#B88CF3/cf &f- &7The main command");
-            if (sender.hasPermission("cf.add")) {
-                Util.send(sender, "&#B88CF3/cf add <alias> <command> &f- &7Add a command, example: /cf add gmc gamemode creative");
-            }
-            if (sender.hasPermission("cf.remove")) {
-                Util.send(sender, "&#B88CF3/cf remove <alias> &f- &7Remove a command, example: /cf remove gmc");
+            if (sender.hasPermission("cf.edit")) {
+                Util.send(sender, "&#B88CF3/cf add &f- &7Add a command.");
             }
             if (sender.hasPermission("cf.edit")) {
-                Util.send(sender, "&#B88CF3/cf edit [maincommand/permission/permissionmessage] <alias> <value> &f- &7Edit a command, example: /cf edit permission gmc myPermission");
+                Util.send(sender, "&#B88CF3/cf edit &f- &7View all commands and edit them in the menu");
+            }
+            if (sender.hasPermission("cf.edit")) {
+                Util.send(sender, "&#B88CF3/cf remove <alias> &f- &7Remove a command, example: /cf remove gmc");
             }
             if (sender.hasPermission("cf.reload")) {
                 Util.send(sender, "&#B88CF3/cf reload &f- &7Reload the config and commands");
@@ -109,6 +109,9 @@ public class FCommand extends FyCommand {
     public List<String> tabComplete(CommandSender sender, String[] args) {
         List<String> completions = new ArrayList<>();
         if (args.length == 1) {
+            if (sender.hasPermission("cf.edit")) {
+                completions.add("add");
+            }
             if (sender.hasPermission("cf.edit")) {
                 completions.add("edit");
             }

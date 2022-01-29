@@ -159,7 +159,7 @@ public class FactoryMenu {
                                 .cancel((pl) -> openEditor(pl, alias))))
 
                 .item(12, new Item(Material.CLOCK, "&#91AEE2&lCooldown")
-                        .lore("&#7285A9Currently&7: " + formatDuration(command.getCooldownMs()), "&7Set the cooldown.")
+                        .lore("&#7285A9Currently&7: " + orNothing(formatDuration(command.getCooldownMs())), "&7Set the cooldown.")
                         .click((menu, event) -> openCooldown(player, alias)))
 
                 .item(13, new Item(Material.GOLDEN_HORSE_ARMOR, "&#91AEE2&lCooldown message")
@@ -172,7 +172,7 @@ public class FactoryMenu {
                                     pl.closeInventory();
                                 })
                                 .post((pl, msg) -> {
-                                    CommandFactory.getProcessor().editPermissionMessage(alias, msg);
+                                    CommandFactory.getProcessor().editCooldownMessage(alias, msg);
                                     openEditor(pl, alias);
                                 })
                                 .cancel((pl) -> openEditor(pl, alias))))
@@ -225,21 +225,21 @@ public class FactoryMenu {
         }
 
         Executor executor = command.getExecutableBy();
-        AtomicBoolean players = new AtomicBoolean();
-        AtomicBoolean console = new AtomicBoolean();
+        AtomicBoolean players = new AtomicBoolean(executor == Executor.PLAYER || executor == Executor.BOTH);
+        AtomicBoolean console = new AtomicBoolean(executor == Executor.CONSOLE || executor == Executor.BOTH);
 
         new Menu(3, "&fExecutor of " + alias)
                 .distributeRowEvenly(1)
 
                 .item(9, new SliderItem()
-                        .initial(executor == Executor.PLAYER || executor == Executor.BOTH ? 0 : 1)
+                        .initial(players.get() ? 0 : 1)
                         .add(0, new Item(Material.LIME_STAINED_GLASS_PANE, "&a&lPlayers")
                                 .lore("&7Players can execute this command"), (menu, event) -> players.set(true))
                         .add(1, new Item(Material.RED_STAINED_GLASS_PANE, "&c&lPlayers")
                                 .lore("&7Players can't execute this command"), (menu, event) -> players.set(false)))
 
                 .item(10, new SliderItem()
-                        .initial(executor == Executor.CONSOLE || executor == Executor.BOTH ? 0 : 1)
+                        .initial(console.get() ? 0 : 1)
                         .add(0, new Item(Material.LIME_STAINED_GLASS_PANE, "&a&lConsole")
                                 .lore("&7Console can execute this command"), (menu, event) -> console.set(true))
                         .add(1, new Item(Material.RED_STAINED_GLASS_PANE, "&c&lConsole")
@@ -250,12 +250,21 @@ public class FactoryMenu {
                         .click((menu, event) -> {
                             if (players.get() && console.get()) {
                                 CommandFactory.getProcessor().editExecutableBy(alias, Executor.BOTH);
+                                openEditor(player, alias);
                             } else if (players.get()) {
                                 CommandFactory.getProcessor().editExecutableBy(alias, Executor.PLAYER);
+                                openEditor(player, alias);
                             } else if (console.get()) {
                                 CommandFactory.getProcessor().editExecutableBy(alias, Executor.CONSOLE);
+                                openEditor(player, alias);
+                            } else {
+                                menu.item(26, new TimedItem(new Item(Material.BARRIER, "&4&lInvalid arguments!")
+                                        .lore("&7You need to have someone be able to execute this command!")
+                                        .click((menu1, event1) -> {
+
+                                        }), menu, event, 5 * 20));
+                                menu.updateItem(26);
                             }
-                            openEditor(player, alias);
                         }))
 
                 .animation(new SplitMiddleInAnimation())
@@ -291,7 +300,7 @@ public class FactoryMenu {
         SliderItem hoursItem = new SliderItem().initial(hours.get() > -1 && hours.get() < 24 ? hours.get() : 0);
         SliderItem minsItem = new SliderItem().initial(mins.get() > -1 && mins.get() < 60 ? mins.get() : 0);
         SliderItem secsItem = new SliderItem().initial(secs.get() > -1 && secs.get() < 60 ? secs.get() : 0);
-        SliderItem msItem = new SliderItem().initial(ms.get() > -1 && ms.get() < 1000 ? ms.get() : 0);
+        SliderItem msItem = new SliderItem().initial(ms.get() > -1 && ms.get() < 1000 ? (ms.get() / 50) : 0);
 
         for (int i = 0; i < 31; i++) {
             int finalIndex = i;
@@ -361,8 +370,8 @@ public class FactoryMenu {
                 .item(13, msItem)
                 .item(26, save
                         .click((menu, event) -> {
-                            openEditor(player, alias);
                             CommandFactory.getProcessor().editCooldown(alias, getDuration(days, hours, mins, secs, ms));
+                            openEditor(player, alias);
                         }))
                 .distributeRowEvenly(1)
                 .fillBackground(Material.CYAN_STAINED_GLASS_PANE)

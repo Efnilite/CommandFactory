@@ -76,7 +76,7 @@ public class AliasedCommand {
      * @return the cooldown string but updated
      */
     public String getCooldownString() {
-        String[] values = DurationFormatUtils.formatDuration(cooldownMs, "dddd:hhhh:mmmm:ssss:SSSS", false).split(":");
+        String[] values = DurationFormatUtils.formatDuration(cooldownMs, "dddd:HHHH:mmmm:ssss:SSSS", false).split(":");
         StringBuilder cooldown = new StringBuilder();
         for (int i = 0; i < 5; i++) {
             int val = Integer.parseInt(values[i]);
@@ -98,8 +98,8 @@ public class AliasedCommand {
                     break;
             }
         }
-        this.cooldownMessage = cooldown.toString();
-        return cooldownMessage;
+        this.cooldown = cooldown.toString();
+        return cooldown.toString();
     }
 
     public void setNotification(@Nullable RegisterNotification notification) {
@@ -165,10 +165,6 @@ public class AliasedCommand {
 
     public @Nullable String getExecutableByMessage() {
         return executableByMessage;
-    }
-
-    public @Nullable String getCooldown() {
-        return cooldown;
     }
 
     public @Nullable String getCooldownMessage() {

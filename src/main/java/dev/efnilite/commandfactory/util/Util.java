@@ -70,8 +70,8 @@ public class Util {
         return ChatColor.translateAlternateColorCodes('&', Colours.colour(string));
     }
 
-    public static void send(CommandSender sender, String... message) {
-        sender.sendMessage(Util.colour(message));
+    public static void send(CommandSender sender, String message) {
+        sender.sendMessage(Colours.colour(message));
     }
 
     /**

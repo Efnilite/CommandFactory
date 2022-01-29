@@ -331,7 +331,6 @@ public final class CommandProcessor implements CommandExecutor {
                 Util.send(sender, "&#711FDE» &7Unknown main command: '" + command.getMainCommand() + "'");
             }
         } catch (StackOverflowError overflow) {
-            overflow.printStackTrace();
             Util.send(sender, FCommand.MESSAGE_PREFIX + "&cFound infinite loop while processing command '" + command.getMainCommand() + "'");
             Util.send(sender, "&7Please make sure your alias and main command are not the same.");
         } catch (Throwable throwable) {

@@ -1,8 +1,7 @@
 # ---------------------------------- How to create a command -------------------------------
 #
-## Simple commands
-# For simple commands, use /eth add <alias> <command>
-# Example: /eth add gmc gamemode creative
+## Commands
+# For editing commands in-game, use /eth edit
 #
 ## Editing commands here
 #
@@ -52,21 +51,3 @@ commands:
         executable-by-message: '&c&l> &7Silly console.'
         cooldown: '2d 1h 3m 10s 360ms'
         cooldown-message: '&c&l> &7You have to wait %time% until you can do that again!'
-    2:
-        command: '/ethereal'
-        aliases: '/ethrl, /commandalias, /calias, /alias'
-    3:
-        command: '/summon villager ~ ~1 ~ {VillagerData:{profession:butcher,level:4,type:desert},PersistenceRequired:1,CustomName:""Example"",ActiveEffects:[{Id:12,Amplifier:0,Duration:999999},{Id:17,Amplifier:0,Duration:999999}],Offers:{Recipes:[{buy:{id:emerald,Count:14},sell:{id:acacia_boat,Count:1},rewardExp:0b,maxUses:9999999}]}}'
-        aliases: '/summonanamazingvillager' # Example with a long command including ""
-        executable-by: 'player'
-        cooldown: '30m'
-    4:
-        command: '/tp %arg 1% ~ ~%arg 2% ~'
-        aliases: '/upother %arg 1% %arg 2%, /upo %arg 1% %arg 2%'
-        permission: 'eth.up.other'
-    5:
-        command: '/tp @p ~ ~%arg 1% ~'
-        aliases: '/up %argument-1%'
-        permission: 'eth.up'
-        executable-by: 'player'
-        cooldown: '10s'

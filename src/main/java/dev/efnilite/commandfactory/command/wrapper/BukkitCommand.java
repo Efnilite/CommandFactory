@@ -7,8 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A custom command wrapper
- *
- * @author Efnilite
  */
 public class BukkitCommand extends Command {
 

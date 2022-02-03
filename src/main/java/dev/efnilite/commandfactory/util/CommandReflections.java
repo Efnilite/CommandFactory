@@ -5,11 +5,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.SimpleCommandMap;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 
+/**
+ * Reflections required to update the internal CommandMap
+ */
+@ApiStatus.Internal
 public class CommandReflections {
 
     public static @Nullable SimpleCommandMap retrieveMap() {

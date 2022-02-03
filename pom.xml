@@ -6,7 +6,7 @@
 
     <groupId>dev.efnilite</groupId>
     <artifactId>CommandFactory</artifactId>
-    <version>1.4.0</version>
+    <version>1.0.0</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -72,6 +72,10 @@
             <id>spigot-repo</id>
             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
+        <repository>
+            <id>sonatype-oss-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -81,18 +85,21 @@
             <version>1.18.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>com.github.Efnilite</groupId>
             <artifactId>fyCore</artifactId>
             <version>3fa56c9caf</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>22.0.0</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>

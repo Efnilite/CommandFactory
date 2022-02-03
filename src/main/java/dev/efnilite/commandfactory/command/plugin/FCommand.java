@@ -8,11 +8,16 @@ import dev.efnilite.fycore.command.FyCommand;
 import dev.efnilite.fycore.util.Time;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * CommandFactory main command.
+ */
+@ApiStatus.Internal
 public class FCommand extends FyCommand {
 
     private final CommandProcessor factory = CommandFactory.getProcessor();

@@ -6,6 +6,9 @@ import dev.efnilite.fycore.util.Logging;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Class containing all data for registered commands.
+ */
 public class AliasedCommand {
 
     private String mainCommand;

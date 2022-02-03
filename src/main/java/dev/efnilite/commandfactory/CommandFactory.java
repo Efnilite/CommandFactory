@@ -19,7 +19,7 @@ import org.bukkit.event.HandlerList;
  * Main class
  *
  * @author Efnilite
- * (c) MMXXI
+ * (c) MMXXI - MMXXII
  */
 public final class CommandFactory extends FyPlugin {
 
@@ -49,6 +49,7 @@ public final class CommandFactory extends FyPlugin {
         }
 
         factory = new CommandProcessor();
+
         configuration.read();
 
         registerListener(new Handler());

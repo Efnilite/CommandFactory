@@ -19,6 +19,7 @@ import dev.efnilite.fycore.util.Time;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
@@ -27,6 +28,12 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Menu handling
+ *
+ * @author Efnilite
+ */
+@ApiStatus.Internal
 public class FactoryMenu {
 
     public static void openMain(Player player) {

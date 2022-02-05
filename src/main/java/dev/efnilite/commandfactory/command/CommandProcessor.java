@@ -1,11 +1,11 @@
 package dev.efnilite.commandfactory.command;
 
 import dev.efnilite.commandfactory.CommandFactory;
-import dev.efnilite.commandfactory.command.plugin.FCommand;
 import dev.efnilite.commandfactory.command.wrapper.AliasedCommand;
 import dev.efnilite.commandfactory.command.wrapper.BukkitCommand;
 import dev.efnilite.commandfactory.util.CommandReflections;
 import dev.efnilite.commandfactory.util.Util;
+import dev.efnilite.fycore.chat.Message;
 import dev.efnilite.fycore.util.Logging;
 import dev.efnilite.fycore.util.Task;
 import org.apache.commons.lang.time.DurationFormatUtils;
@@ -251,7 +251,7 @@ public final class CommandProcessor implements CommandExecutor {
             while (matcher.find()) {
                 int index = Integer.parseInt(matcher.group(1)) - 1;
                 if (args.length <= index) {
-                    Util.send(sender, FCommand.MESSAGE_PREFIX + "You don't have enough arguments or you have too many!");
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "You don't have enough arguments or you have too many!");
                     return false;
                 }
                 String input = args[index];
@@ -328,16 +328,16 @@ public final class CommandProcessor implements CommandExecutor {
         try {
             boolean foundCommand = Bukkit.dispatchCommand(sender, command.getMainCommand().replaceFirst("/", "").replace("%player%", sender.getName()));
             if (!foundCommand) {
-                Util.send(sender, "&#711FDE» &7Unknown main command: '" + command.getMainCommand() + "'");
+                Message.send(sender, "<#711FDE>» &7Unknown main command: '" + command.getMainCommand() + "'");
             }
         } catch (StackOverflowError overflow) {
-            Util.send(sender, FCommand.MESSAGE_PREFIX + "&cFound infinite loop while processing command '" + command.getMainCommand() + "'");
-            Util.send(sender, "&7Please make sure your alias and main command are not the same.");
+            Message.send(sender, CommandFactory.MESSAGE_PREFIX + "<red>Found infinite loop while processing command '" + command.getMainCommand() + "'");
+            Message.send(sender, "<gray>Please make sure your alias and main command are not the same.");
         } catch (Throwable throwable) {
             throwable.printStackTrace();
-            Util.send(sender, FCommand.MESSAGE_PREFIX + "&7Unhandled exception while processing command '" + command.getMainCommand() + "'");
-            Util.send(sender, "&7(This is &nnot&r&7 a problem with CommandFactory; contact the plugin developer and check the console)");
-            Util.send(sender, "&7Exception: " + throwable.getMessage());
+            Message.send(sender, CommandFactory.MESSAGE_PREFIX + "<gray>Unhandled exception while processing command '" + command.getMainCommand() + "'");
+            Message.send(sender, "<gray>(This is <underline>not</underline><gray> a problem with CommandFactory; contact the plugin developer and check the console)");
+            Message.send(sender, "<gray>Exception: " + throwable.getMessage());
         }
     }
 

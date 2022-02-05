@@ -3,7 +3,7 @@ package dev.efnilite.commandfactory.command.plugin;
 import dev.efnilite.commandfactory.CommandFactory;
 import dev.efnilite.commandfactory.FactoryMenu;
 import dev.efnilite.commandfactory.command.CommandProcessor;
-import dev.efnilite.commandfactory.util.Util;
+import dev.efnilite.fycore.chat.Message;
 import dev.efnilite.fycore.command.FyCommand;
 import dev.efnilite.fycore.util.Time;
 import org.bukkit.command.CommandSender;
@@ -21,31 +21,50 @@ import java.util.List;
 public class FCommand extends FyCommand {
 
     private final CommandProcessor factory = CommandFactory.getProcessor();
-    public static final String MESSAGE_PREFIX = "&#711FDE» &7";
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (args.length == 0) {
-            Util.send(sender, "&8&m-----------&r &#711FDE&lCommandFactory &8&m-----------");
-            Util.send(sender, "&#B88CF3/cf &f- &7The main command");
+            Message.send(sender, "");
+            Message.send(sender, "<dark_gray><strikethrough>-----------<reset> " + CommandFactory.NAME + " <dark_gray><strikethrough>-----------");
+            Message.send(sender, "");
+            Message.send(sender, "<gray>/cf <dark_gray>- The main command");
+            Message.send(sender, "<gray>/cf permissions<dark_gray>- View all permissions");
             if (sender.hasPermission("cf.edit")) {
-                Util.send(sender, "&#B88CF3/cf add &f- &7Add a command.");
+                Message.send(sender, "<gray>/cf add <dark_gray>- Add a command.");
             }
             if (sender.hasPermission("cf.edit")) {
-                Util.send(sender, "&#B88CF3/cf edit &f- &7View all commands and edit them in the menu");
+                Message.send(sender, "<gray>/cf edit <dark_gray>- View all commands and edit them in the menu");
             }
             if (sender.hasPermission("cf.edit")) {
-                Util.send(sender, "&#B88CF3/cf remove <alias> &f- &7Remove a command, example: /cf remove gmc");
+                Message.send(sender, "<gray>/cf remove <dark_gray>- Remove a command, example: /cf remove gmc");
             }
             if (sender.hasPermission("cf.reload")) {
-                Util.send(sender, "&#B88CF3/cf reload &f- &7Reload the config and commands");
+                Message.send(sender, "<gray>/cf reload <dark_gray>- Reload the config and commands");
             }
             if (sender.hasPermission("cf.resetcooldowns")) {
-                Util.send(sender, "&#B88CF3/cf resetcooldowns &f- &7Reset all cooldowns. &cThis contains no confirm message.");
+                Message.send(sender, "<gray>/cf resetcooldowns <dark_gray>- Reset all cooldowns. <#A00000>This contains no confirm message.");
             }
+            Message.send(sender, "");
+            Message.send(sender, "<dark_gray><strikethrough>----------------------------------");
+            Message.send(sender, "");
             return true;
         } else if (args.length == 1) {
             switch (args[0].toLowerCase()) {
+                case "permissions":
+
+                    Message.send(sender, "");
+                    Message.send(sender, "<dark_gray><strikethrough>-----------<reset> <gradient:#7F00FF>Permissions</gradient:#007FFF> <dark_gray><strikethrough>-----------");
+                    Message.send(sender, "");
+                    Message.send(sender, "<gray>/cf add <dark_gray>- cf.edit");
+                    Message.send(sender, "<gray>/cf edit <dark_gray>- cf.edit");
+                    Message.send(sender, "<gray>/cf remove <dark_gray>- cf.edit");
+                    Message.send(sender, "<gray>/cf reload <dark_gray>- cf.reload");
+                    Message.send(sender, "<gray>/cf resetcooldowns <dark_gray>- cf.resetcooldowns");
+                    Message.send(sender, "");
+                    Message.send(sender, "<dark_gray><strikethrough>----------------------------------");
+                    Message.send(sender, "");
+                    return true;
                 case "add":
                     if (sender instanceof Player && sender.hasPermission("cf.edit")) {
                         FactoryMenu.initNew((Player) sender);
@@ -59,7 +78,7 @@ public class FCommand extends FyCommand {
                     return true;
                 case "reload":
                     if (!cooldown(sender, "reload", 500)) {
-                        Util.send(sender, MESSAGE_PREFIX + "Please wait before using that again!");
+                        Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Please wait before using that again!");
                         return true;
                     }
                     if (!sender.hasPermission("cf.reload")) {
@@ -70,7 +89,7 @@ public class FCommand extends FyCommand {
                     factory.unregisterAll();
                     CommandFactory.getConfiguration().reload(true);
 
-                    Util.send(sender, MESSAGE_PREFIX + "Reloaded in " + Time.timerEnd("reload") + "ms!");
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Reloaded " + CommandFactory.NAME + "<gray> in " + Time.timerEnd("reload") + "ms!");
                     return true;
 
                 case "resetcooldowns":
@@ -80,11 +99,11 @@ public class FCommand extends FyCommand {
 
                     CommandFactory.getProcessor().resetCooldowns();
 
-                    Util.send(sender, MESSAGE_PREFIX + "Reset all cooldowns!");
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Reset all cooldowns!");
                     return true;
 
                 default:
-                    Util.send(sender, MESSAGE_PREFIX + "Unknown command. Trying to register a command? Example: /cf add gmc gamemode creative");
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command. Trying to register a command? Example: /cf add gmc gamemode creative");
                     return true;
             }
         } else if (args.length == 2) {
@@ -96,14 +115,14 @@ public class FCommand extends FyCommand {
                     String alias = args[1];
                     boolean success = factory.unregister(alias);
                     if (success) {
-                        Util.send(sender, MESSAGE_PREFIX + "Removed '" + alias + "'!");
+                        Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Removed '" + alias + "'!");
                     } else {
-                        Util.send(sender, MESSAGE_PREFIX + "&cCouldn't find '" + alias + "'!");
+                        Message.send(sender, CommandFactory.MESSAGE_PREFIX + "<red>Couldn't find '" + alias + "'!");
                     }
                     return true;
 
                 default:
-                    Util.send(sender, MESSAGE_PREFIX + "Unknown command. Trying to register a command? Example: /cf add gmc gamemode creative");
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command. Trying to register a command? Example: /cf add gmc gamemode creative");
                     return true;
             }
         }
@@ -126,6 +145,7 @@ public class FCommand extends FyCommand {
             if (sender.hasPermission("cf.resetcooldowns")) {
                 completions.add("resetcooldowns");
             }
+            completions.add("permissions");
             return completions(args[0], completions);
         } else {
             return Collections.emptyList();

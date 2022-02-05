@@ -28,6 +28,9 @@ public final class CommandFactory extends FyPlugin {
     private static Configuration configuration;
     public static boolean IS_OUTDATED = false;
 
+    public static final String NAME = "<gradient:#7F00FF>CommandFactory</gradient:#007FFF>";
+    public static final String MESSAGE_PREFIX = NAME + " <#7B7B7B>» <gray>";
+
     @Override
     public void enable() {
         instance = this;
@@ -55,7 +58,7 @@ public final class CommandFactory extends FyPlugin {
         registerListener(new Handler());
         registerCommand("commandfactory",  new FCommand());
 
-        Metrics metrics = new Metrics(this, 13281);
+        Metrics metrics = new Metrics(this, 14168);
         metrics.addCustomChart(new SingleLineChart("total_alias_count", () -> factory.getMappedSize()));
 
         Logging.info("Loaded CommandFactory in " + Time.timerEnd("enable") + "ms");

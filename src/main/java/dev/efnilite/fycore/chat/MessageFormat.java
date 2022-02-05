@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class MessageFormat {
 
     private static final Pattern TAGS_PATTERN = Pattern.compile("<(\\S+?)>");
@@ -69,7 +70,7 @@ public class MessageFormat {
 
                 switch (key) {
                     case "fade":
-                        builder.
+//                        builder.
                 }
                 return;
             }

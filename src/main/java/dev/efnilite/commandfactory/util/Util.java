@@ -2,7 +2,6 @@ package dev.efnilite.commandfactory.util;
 
 import dev.efnilite.fycore.util.colour.Colours;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.Nullable;
@@ -68,10 +67,6 @@ public class Util {
             return string;
         }
         return ChatColor.translateAlternateColorCodes('&', Colours.colour(string));
-    }
-
-    public static void send(CommandSender sender, String message) {
-        sender.sendMessage(Colours.colour(message));
     }
 
     /**

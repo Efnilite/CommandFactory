@@ -1,0 +1,38 @@
+<svg width="1685" height="345" xmlns="http://www.w3.org/2000/svg">
+ <title>cf logo</title>
+ <defs>
+  <linearGradient y2="0" x2="1" y1="0" x1="0" id="svg_51">
+   <stop offset="0" stop-opacity="0.99219" stop-color="#7f00ff"/>
+   <stop offset="1" stop-opacity="0.99609" stop-color="#007fff"/>
+  </linearGradient>
+  <linearGradient y2="1" x2="0" y1="0" x1="0" id="svg_54">
+   <stop offset="0" stop-opacity="0.99219" stop-color="#7f00ff"/>
+   <stop offset="1" stop-opacity="0.99609" stop-color="#007fff"/>
+  </linearGradient>
+  <linearGradient y2="0" x2="1" y1="1" x1="1" id="svg_55">
+   <stop offset="0" stop-opacity="0.99219" stop-color="#7f00ff"/>
+   <stop offset="1" stop-opacity="0.99609" stop-color="#007fff"/>
+  </linearGradient>
+  <linearGradient y2="1" x2="0" y1="0.1297" x1="0.10156" id="svg_58">
+   <stop offset="0" stop-opacity="0.99219" stop-color="#7f00ff"/>
+   <stop offset="1" stop-opacity="0.99609" stop-color="#007fff"/>
+  </linearGradient>
+  <linearGradient y2="0" x2="1" y1="0.73517" x1="0.21094" id="svg_64">
+   <stop offset="0" stop-opacity="0.99219" stop-color="#7f00ff"/>
+   <stop offset="1" stop-opacity="0.99609" stop-color="#007fff"/>
+  </linearGradient>
+ </defs>
+ <g id="Layer_1">
+  <title>Layer 1</title>
+  <rect id="svg_70" height="494.93673" width="1831.64565" y="-43.32279" x="-52.62665" stroke-width="0" fill="#ffffff"/>
+  <rect transform="rotate(45 185.407 101.948)" stroke="null" id="svg_20" height="144.83768" width="55" y="29.52934" x="157.90714" stroke-width="0" fill="url(#svg_55)"/>
+  <rect transform="rotate(-45 169.533 226.822)" stroke="null" id="svg_22" height="209.04823" width="55" y="122.29749" x="142.0331" stroke-width="0" fill="url(#svg_58)"/>
+  <rect stroke="null" id="svg_30" height="235.90359" width="56" y="80.4436" x="965.11521" stroke-width="0" fill="url(#svg_54)"/>
+  <path id="svg_31" d="m965.05171,26.52015l157.00453,0l0,56l-157.00453,0l0,-56z" opacity="undefined" stroke-width="0" stroke="null" fill="url(#svg_64)"/>
+  <rect stroke="null" id="svg_32" height="55.77866" width="215.16137" y="145.16795" x="904.93754" stroke-width="0" fill="url(#svg_51)"/>
+  <path transform="rotate(90 992.356 53.7629)" stroke="null" id="svg_63" d="m962.81032,82.52738l0,-57.52895l59.09146,57.52895l-59.09146,0z" stroke-width="0" fill="#ffffff"/>
+  <path transform="rotate(-90 1092.72 173.42)" id="svg_65" d="m1063.95109,203.3468l0,-59.85453l57.52896,59.85453l-57.52896,0z" stroke-width="0" fill="#ffffff"/>
+  <text xml:space="preserve" text-anchor="start" font-family="'Rasa'" font-size="156" stroke-width="0" id="svg_66" y="212.83777" x="281.67854" fill="#000000">ommand</text>
+  <text xml:space="preserve" text-anchor="start" font-family="'Rasa'" font-size="156" stroke-width="0" id="svg_67" y="207.43236" x="1157.35616" fill="#000000">actory</text>
+ </g>
+</svg>

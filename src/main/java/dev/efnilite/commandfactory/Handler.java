@@ -1,7 +1,6 @@
 package dev.efnilite.commandfactory;
 
-import dev.efnilite.commandfactory.command.plugin.FCommand;
-import dev.efnilite.commandfactory.util.Util;
+import dev.efnilite.fycore.chat.Message;
 import dev.efnilite.fycore.event.EventWatcher;
 import dev.efnilite.fycore.util.Version;
 import org.bukkit.entity.Player;
@@ -21,13 +20,12 @@ public class Handler implements EventWatcher {
 
         if (player.isOp() && CommandFactory.IS_OUTDATED) {
             if (Version.isHigherOrEqual(Version.V1_16)) {
-//                Message.send(player,
-//                        "<#711FDE>> <grey>Your CommandFactory is outdated. " +
-//                                "<underlined><click:open_url:https://github.com/Efnilite/CommandFactory/releases/latest><#711FDE>Click here</click></underlined> " +
-//                                "<grey>to visit the latest version.");
+                Message.send(player,
+                        CommandFactory.MESSAGE_PREFIX + "Your version is outdated. " +
+                                "<underline><click:open_url:https://github.com/Efnilite/CommandFactory/releases/latest><#711FDE>Click here</click></underlined> " +
+                                "<gray>to visit the latest version.");
             } else {
-                player.sendMessage(Util.colour(FCommand.MESSAGE_PREFIX + "Your CommandFactory version is outdated. " +
-                        "Visit the Spigot page to download the latest version."));
+                Message.send(player, CommandFactory.MESSAGE_PREFIX + "Your CommandFactory version is outdated. Please update!");
             }
         }
     }

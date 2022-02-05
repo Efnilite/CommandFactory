@@ -2,11 +2,10 @@ package dev.efnilite.commandfactory;
 
 import dev.efnilite.commandfactory.command.Executor;
 import dev.efnilite.commandfactory.command.RegisterNotification;
-import dev.efnilite.commandfactory.command.plugin.FCommand;
 import dev.efnilite.commandfactory.command.wrapper.AliasedCommand;
-import dev.efnilite.commandfactory.util.Util;
 import dev.efnilite.commandfactory.util.config.Option;
 import dev.efnilite.fycore.chat.ChatAnswer;
+import dev.efnilite.fycore.chat.Message;
 import dev.efnilite.fycore.config.ConfigOption;
 import dev.efnilite.fycore.inventory.Menu;
 import dev.efnilite.fycore.inventory.PagedMenu;
@@ -73,12 +72,12 @@ public class FactoryMenu {
     public static void initNew(Player player) {
         new ChatAnswer(player, "cancel")
                 .pre((pl) -> {
-                    Util.send(pl, FCommand.MESSAGE_PREFIX + "Please enter the alias. Type 'cancel' to cancel.");
+                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter the alias. Type 'cancel' to cancel.");
                     pl.closeInventory();
                 })
                 .post((pl, alias) -> new ChatAnswer(player, "cancel")
                         .pre((pl1) -> {
-                            Util.send(pl1, FCommand.MESSAGE_PREFIX + "Please enter the main command. Type 'cancel' to cancel.");
+                            Message.send(pl1, CommandFactory.MESSAGE_PREFIX + "Please enter the main command. Type 'cancel' to cancel.");
                             pl1.closeInventory();
                         })
                         .post((pl1, main) -> {
@@ -87,17 +86,17 @@ public class FactoryMenu {
                             if (notification != null) {
                                 switch (notification) {
                                     case ARGUMENT_NULL:
-                                        Util.send(pl, FCommand.MESSAGE_PREFIX + "&cYou entered a value which is null!");
+                                        Message.send(pl, CommandFactory.MESSAGE_PREFIX + "&cYou entered a value which is null!");
                                         return;
                                     case ALIAS_ALREADY_EXISTS:
-                                        Util.send(pl, FCommand.MESSAGE_PREFIX + "&cThat alias already exists!");
+                                        Message.send(pl, CommandFactory.MESSAGE_PREFIX + "&cThat alias already exists!");
                                         return;
                                 }
                             }
                             openEditor(pl1, alias);
                         })
-                        .cancel((pl1) -> Util.send(pl, FCommand.MESSAGE_PREFIX + "Cancelled your command.")))
-                .cancel((pl) -> Util.send(pl, FCommand.MESSAGE_PREFIX + "Cancelled your command."));
+                        .cancel((pl1) -> Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Cancelled your command.")))
+                .cancel((pl) -> Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Cancelled your command."));
     }
 
     public static void openEditor(Player player, String alias) {
@@ -128,7 +127,7 @@ public class FactoryMenu {
                         .lore("&#7285A9Currently&7: " + orNothing(command.getMainCommand()), "&7Set the main command by typing it.")
                         .click((menu, event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
-                                    Util.send(pl, FCommand.MESSAGE_PREFIX + "&7Please enter a command. Type 'cancel' to cancel.");
+                                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "&7Please enter a command. Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
                                 .post((pl, msg) -> {
@@ -141,7 +140,7 @@ public class FactoryMenu {
                         .lore("&#7285A9Currently&7: " + orNothing(command.getPermission()), "&7Set the permission by typing it.")
                         .click((menu, event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
-                                    Util.send(pl, FCommand.MESSAGE_PREFIX + "&7Please enter a permission. Type 'cancel' to cancel.");
+                                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "&7Please enter a permission. Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
                                 .post((pl, msg) -> {
@@ -155,8 +154,8 @@ public class FactoryMenu {
                                 "&7This is the message players get when", "&7they don't have enough permissions.")
                         .click((menu, event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
-                                    Util.send(pl, FCommand.MESSAGE_PREFIX + "Please enter a permission message. " +
-                                            "Use '&' for colours. Hex colours are supported ('&#abcde'). Type 'cancel' to cancel.");
+                                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a permission message. " +
+                                            "Use '&' or '<name>' for colours. Hex colours are supported ('&#abcde'). Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
                                 .post((pl, msg) -> {
@@ -174,8 +173,9 @@ public class FactoryMenu {
                                 "&7This is the message players get when", "&7they still have a cooldown.")
                         .click((menu, event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
-                                    Util.send(pl, FCommand.MESSAGE_PREFIX + "Please enter a cooldown message. " +
-                                            "Use '&' for colours. Hex colours are supported ('&#abcde'). Type 'cancel' to cancel.");
+                                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a cooldown message. " +
+                                            "Use '&' or '<name>' for colours. Hex colours are supported ('&#abcde'). Use '%time%' for the remaining time." +
+                                            "Use '%cooldown%' for the total cooldown time. Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
                                 .post((pl, msg) -> {
@@ -193,8 +193,8 @@ public class FactoryMenu {
                                 "&7This is the message players/console get when", "&7they can't execute this command.")
                         .click((menu, event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
-                                    Util.send(pl, FCommand.MESSAGE_PREFIX + "Please enter an executor message. " +
-                                            "Use '&' for colours. Hex colours are supported ('&#abcde'). Type 'cancel' to cancel.");
+                                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter an executor message. " +
+                                            "Use '&' or '<name>'. Hex colours are supported ('&#abcde'). Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
                                 .post((pl, msg) -> {
@@ -209,7 +209,7 @@ public class FactoryMenu {
                             menu.item(event.getSlot(), new TimedItem(new Item(Material.BARRIER, "&#980F0F&lAre you sure?")
                                     .lore("&7If you click this item again,", "&7this command will be &npermanently deleted&r&7!")
                                     .click((menu1, event1) -> {
-                                        Util.send(player, FCommand.MESSAGE_PREFIX + "Deleted command '" + alias + "'!");
+                                        Message.send(player, CommandFactory.MESSAGE_PREFIX + "Deleted command '" + alias + "'!");
                                         CommandFactory.getProcessor().unregister(alias);
                                         openMain(player);
                                     }), menu, event, 5 * 20));
@@ -414,7 +414,7 @@ public class FactoryMenu {
                                     .lore("&7If you click this item again,", "&7&nall cooldowns&r&7 will be reset!")
                                     .click((menu1, event1) -> {
                                         CommandFactory.getProcessor().resetCooldowns();
-                                        Util.send(player, FCommand.MESSAGE_PREFIX + "Reset all cooldowns!");
+                                        Message.send(player, CommandFactory.MESSAGE_PREFIX + "Reset all cooldowns!");
                                     }), menu, event, 20 * 5));
                             menu.updateItem(event.getSlot());
                         }))
@@ -429,7 +429,7 @@ public class FactoryMenu {
                                         Time.timerStart("reload");
                                         CommandFactory.getProcessor().unregisterAll();
                                         CommandFactory.getConfiguration().reload(true);
-                                        Util.send(player, FCommand.MESSAGE_PREFIX + "Reloaded files in "
+                                        Message.send(player, CommandFactory.MESSAGE_PREFIX + "Reloaded files in "
                                                 + Time.timerEnd("reload") + "ms!");
                                     }), menu, event, 20 * 5));
                             menu.updateItem(event.getSlot());

@@ -6,7 +6,7 @@
 
     <groupId>dev.efnilite</groupId>
     <artifactId>CommandFactory</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>com.github.Efnilite</groupId>
             <artifactId>fyCore</artifactId>
-            <version>3743822070</version>
+            <version>12ea002c33</version>
             <scope>compile</scope>
         </dependency>
 

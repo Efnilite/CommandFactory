@@ -1,6 +1,5 @@
 Visit the wiki
 
-v1.3.1
-- Update cooldown message to be more readable
-- Move to fyCore architecture
-    > This should make the plugin more reliable.
+v1.0.2
+- Fixed shift clicking in menu causing players to get items (thanks The_osher)
+- Fixed outdated message

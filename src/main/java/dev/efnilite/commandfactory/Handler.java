@@ -20,11 +20,15 @@ public class Handler implements EventWatcher {
 
         if (player.isOp() && CommandFactory.IS_OUTDATED) {
             if (Version.isHigherOrEqual(Version.V1_16)) {
+                Message.send(player, "");
                 Message.send(player,
                         CommandFactory.MESSAGE_PREFIX + "Your version is outdated. " +
-                                "Please <underline>visit the Spigot page</underline> to update.");
+                                "Please <underline>visit the Spigot page<reset><gray> to update.");
+                Message.send(player, "");
             } else {
+                Message.send(player, "");
                 Message.send(player, CommandFactory.MESSAGE_PREFIX + "Your CommandFactory version is outdated. Please update!");
+                Message.send(player, "");
             }
         }
     }

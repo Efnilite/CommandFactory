@@ -41,7 +41,7 @@ public class FactoryMenu {
         List<MenuItem> commands = new ArrayList<>();
         for (String alias : CommandFactory.getProcessor().getAliases()) {
             commands.add(new Item(Material.WRITABLE_BOOK, "<#1F85DE><bold>" + alias)
-                    .lore("<gray>Click to edit this command.")
+                    .lore("<gray>Click to edit this alias.")
                     .click((menu, event) -> openEditor(player, alias)));
         }
 
@@ -49,9 +49,9 @@ public class FactoryMenu {
                 displayRows(0, 1)
                 .addToDisplay(commands)
 
-                .nextPage(35, new Item(Material.LIME_DYE, "<green><bold>Next page")
+                .nextPage(35, new Item(Material.LIME_DYE, "<#0DCB07><bold>»") // next page
                         .click((menu, event) -> mainMenu.page(1)))
-                .prevPage(27, new Item(Material.RED_DYE, "<red><bold>Previous page")
+                .prevPage(27, new Item(Material.RED_DYE, "<#DE1F1F><bold>«") // previous page
                         .click((menu, event) -> mainMenu.page(-1)))
 
                 .item(30, new Item(Material.PAPER, "<#2055B8><bold>New command")
@@ -72,12 +72,16 @@ public class FactoryMenu {
     public static void initNew(Player player) {
         new ChatAnswer(player, "cancel")
                 .pre((pl) -> {
-                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter the alias. Type 'cancel' to cancel.");
+                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter the alias. " +
+                            "This is the other (usually shorter) version of the main command. Example: /gmc (with main command /gamemode creative). " +
+                            "Type 'cancel' to cancel.");
                     pl.closeInventory();
                 })
                 .post((pl, alias) -> new ChatAnswer(player, "cancel")
                         .pre((pl1) -> {
-                            Message.send(pl1, CommandFactory.MESSAGE_PREFIX + "Please enter the main command. Type 'cancel' to cancel.");
+                            Message.send(pl1, CommandFactory.MESSAGE_PREFIX + "Please enter the main command. " +
+                                    "This is the command that actually gets executed when you enter the alias. Example: /gamemode creative (with alias /gmc). " +
+                                    "Type 'cancel' to cancel.");
                             pl1.closeInventory();
                         })
                         .post((pl1, main) -> {
@@ -124,7 +128,10 @@ public class FactoryMenu {
         editor
                 .distributeRowEvenly(1)
                 .item(9, new Item(Material.COMMAND_BLOCK, "<#91AEE2><bold>Main command")
-                        .lore("<#7285A9>Currently<gray>: " + orNothing(command.getMainCommand()), "<gray>Set the main command by typing it.")
+                        .lore("<#7285A9>Currently<gray>: " + orNothing(command.getMainCommand()),
+                                "<gray>This is the other (usually shorter) version of the main command.",
+                                "<gray>Example: /gmc (with main command /gamemode creative)",
+                                "<gray>Set the main command by typing it.")
                         .click((menu, event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Message.send(pl, CommandFactory.MESSAGE_PREFIX + "<gray>Please enter a command. Type 'cancel' to cancel.");
@@ -137,7 +144,8 @@ public class FactoryMenu {
                                 .cancel((pl) -> openEditor(pl, alias))))
 
                 .item(10, new Item(Material.NAME_TAG, "<#91AEE2><bold>Permission")
-                        .lore("<#7285A9>Currently<gray>: " + orNothing(command.getPermission()), "<gray>Set the permission by typing it.")
+                        .lore("<#7285A9>Currently<gray>: " + orNothing(command.getPermission()),
+                                "<gray>Set the permission by typing it.")
                         .click((menu, event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Message.send(pl, CommandFactory.MESSAGE_PREFIX + "<gray>Please enter a permission. Type 'cancel' to cancel.");
@@ -150,8 +158,10 @@ public class FactoryMenu {
                                 .cancel((pl) -> openEditor(pl, alias))))
 
                 .item(11, new Item(Material.IRON_HORSE_ARMOR, "<#91AEE2><bold>Permission message")
-                        .lore("<#7285A9>Currently<gray>: " + orNothing(command.getPermissionMessage()), "<gray>Set the permission message by typing it.",
-                                "<gray>This is the message players get when", "<gray>they don't have enough permissions.")
+                        .lore("<#7285A9>Currently<gray>: " + orNothing(command.getPermissionMessage()),
+                                "<gray>Set the permission message by typing it.",
+                                "<gray>This is the message players get when",
+                                "<gray>they don't have enough permissions.")
                         .click((menu, event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a permission message. " +

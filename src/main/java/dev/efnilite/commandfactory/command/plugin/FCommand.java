@@ -49,6 +49,7 @@ public class FCommand extends FyCommand {
             Message.send(sender, "<dark_gray><strikethrough>----------------------------------");
             Message.send(sender, "");
             return true;
+
         } else if (args.length == 1) {
             switch (args[0].toLowerCase()) {
                 case "permissions":
@@ -103,7 +104,7 @@ public class FCommand extends FyCommand {
                     return true;
 
                 default:
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command. Trying to register a command? Example: /cf add gmc gamemode creative");
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command");
                     return true;
             }
         } else if (args.length == 2) {
@@ -122,7 +123,7 @@ public class FCommand extends FyCommand {
                     return true;
 
                 default:
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command. Trying to register a command? Example: /cf add gmc gamemode creative");
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command");
                     return true;
             }
         }

@@ -42,7 +42,7 @@ public class FactoryMenu {
         for (String alias : CommandFactory.getProcessor().getAliases()) {
             commands.add(new Item(Material.WRITABLE_BOOK, "<#1F85DE><bold>" + alias)
                     .lore("<gray>Click to edit this alias.")
-                    .click((menu, event) -> openEditor(player, alias)));
+                    .click((event) -> openEditor(player, alias)));
         }
 
         mainMenu.
@@ -50,19 +50,19 @@ public class FactoryMenu {
                 .addToDisplay(commands)
 
                 .nextPage(35, new Item(Material.LIME_DYE, "<#0DCB07><bold>»") // next page
-                        .click((menu, event) -> mainMenu.page(1)))
+                        .click((event) -> mainMenu.page(1)))
                 .prevPage(27, new Item(Material.RED_DYE, "<#DE1F1F><bold>«") // previous page
-                        .click((menu, event) -> mainMenu.page(-1)))
+                        .click((event) -> mainMenu.page(-1)))
 
                 .item(30, new Item(Material.PAPER, "<#2055B8><bold>New command")
                         .lore("<gray>Create a new command")
-                        .click((menu, event) -> initNew(player)))
+                        .click((event) -> initNew(player)))
 
                 .item(31, new Item(Material.NOTE_BLOCK, "<#5F9DAD><bold>Settings")
                         .lore("<gray>Open the settings menu")
-                        .click((menu, event) -> openSettings(player)))
+                        .click((event) -> openSettings(player)))
 
-                .item(32, new Item(Material.ARROW, "<red><bold>Close").click((menu, event) -> player.closeInventory()))
+                .item(32, new Item(Material.ARROW, "<red><bold>Close").click((event) -> player.closeInventory()))
 
                 .fillBackground(Material.GRAY_STAINED_GLASS_PANE)
                 .animation(new SnakeSingleAnimation())
@@ -132,7 +132,7 @@ public class FactoryMenu {
                                 "<gray>This is the other (usually shorter) version of the main command.",
                                 "<gray>Example: /gmc (with main command /gamemode creative)",
                                 "<gray>Set the main command by typing it.")
-                        .click((menu, event) -> new ChatAnswer(player, "cancel")
+                        .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Message.send(pl, CommandFactory.MESSAGE_PREFIX + "<gray>Please enter a command. Type 'cancel' to cancel.");
                                     pl.closeInventory();
@@ -146,7 +146,7 @@ public class FactoryMenu {
                 .item(10, new Item(Material.NAME_TAG, "<#91AEE2><bold>Permission")
                         .lore("<#7285A9>Currently<gray>: " + orNothing(command.getPermission()),
                                 "<gray>Set the permission by typing it.")
-                        .click((menu, event) -> new ChatAnswer(player, "cancel")
+                        .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Message.send(pl, CommandFactory.MESSAGE_PREFIX + "<gray>Please enter a permission. Type 'cancel' to cancel.");
                                     pl.closeInventory();
@@ -162,7 +162,7 @@ public class FactoryMenu {
                                 "<gray>Set the permission message by typing it.",
                                 "<gray>This is the message players get when",
                                 "<gray>they don't have enough permissions.")
-                        .click((menu, event) -> new ChatAnswer(player, "cancel")
+                        .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a permission message. " +
                                             "Use '&' or '<name>' for colours. Hex colours are supported ('<#abcde>'). Type 'cancel' to cancel.");
@@ -176,12 +176,12 @@ public class FactoryMenu {
 
                 .item(12, new Item(Material.CLOCK, "<#91AEE2><bold>Cooldown")
                         .lore("<#7285A9>Currently<gray>: " + orNothing(formatDuration(command.getCooldownMs())), "<gray>Set the cooldown.")
-                        .click((menu, event) -> openCooldown(player, alias)))
+                        .click((event) -> openCooldown(player, alias)))
 
                 .item(13, new Item(Material.GOLDEN_HORSE_ARMOR, "<#91AEE2><bold>Cooldown message")
                         .lore("<#7285A9>Currently<gray>: " + orNothing(command.getCooldownMessage()), "<gray>Set the cooldown message by typing it.",
                                 "<gray>This is the message players get when", "<gray>they still have a cooldown.")
-                        .click((menu, event) -> new ChatAnswer(player, "cancel")
+                        .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a cooldown message. " +
                                             "Use '&' or '<name>' for colours. Hex colours are supported ('<#abcde>'). Use '%time%' for the remaining time." +
@@ -196,12 +196,12 @@ public class FactoryMenu {
 
                 .item(14, new Item(Material.PLAYER_HEAD, "<#91AEE2><bold>Executor")
                         .lore("<#7285A9>Currently<gray>: " + command.getExecutableBy().name().toLowerCase(), "<gray>Set who can execute this command.")
-                        .click((menu, event) -> openExecutor(player, alias)))
+                        .click((event) -> openExecutor(player, alias)))
 
                 .item(15, new Item(Material.DIAMOND_HORSE_ARMOR, "<#91AEE2><bold>Executor message")
                         .lore("<#7285A9>Currently<gray>: " + orNothing(command.getExecutableByMessage()), "<gray>Set the executor message by typing it.",
                                 "<gray>This is the message players/console get when", "<gray>they can't execute this command.")
-                        .click((menu, event) -> new ChatAnswer(player, "cancel")
+                        .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter an executor message. " +
                                             "Use '&' or '<name>'. Hex colours are supported ('<#abcde>'). Type 'cancel' to cancel.");
@@ -215,20 +215,21 @@ public class FactoryMenu {
 
                 .item(30, new Item(Material.BUCKET, "<#C43131><bold>Delete")
                         .lore("<gray>Deletes this command forever.")
-                        .click((menu, event) -> {
+                        .click((event) -> {
+                            Menu menu = event.getMenu();
                             menu.item(event.getSlot(), new TimedItem(new Item(Material.BARRIER, "<#980F0F><bold>Are you sure?")
                                     .lore("<gray>If you click this item again,", "<gray>this command will be <underline>permanently deleted</underline><gray>!")
-                                    .click((menu1, event1) -> {
+                                    .click((event1) -> {
                                         Message.send(player, CommandFactory.MESSAGE_PREFIX + "Deleted command '" + alias + "'!");
                                         CommandFactory.getProcessor().unregister(alias);
                                         openMain(player);
-                                    }), menu, event, 5 * 20));
+                                    }), event, 5 * 20));
                             menu.updateItem(event.getSlot());
                         }))
 
                 .item(32, new Item(Material.ARROW, "<red><bold>Go back")
                         .lore("<gray>Go back to the main menu")
-                        .click((menu, event) -> openMain(player)))
+                        .click((event) -> openMain(player)))
                 .animation(new WaveEastAnimation())
                 .fillBackground(Material.LIGHT_BLUE_STAINED_GLASS_PANE)
                 .open(player);
@@ -251,20 +252,32 @@ public class FactoryMenu {
                 .item(9, new SliderItem()
                         .initial(players.get() ? 0 : 1)
                         .add(0, new Item(Material.LIME_STAINED_GLASS_PANE, "<green><bold>Players")
-                                .lore("<gray>Players can execute this command"), (menu, event) -> players.set(true))
+                                .lore("<gray>Players can execute this command"), (event) -> {
+                            players.set(true);
+                            return true;
+                        })
                         .add(1, new Item(Material.RED_STAINED_GLASS_PANE, "<red><bold>Players")
-                                .lore("<gray>Players can't execute this command"), (menu, event) -> players.set(false)))
+                                .lore("<gray>Players can't execute this command"), (event) -> {
+                            players.set(false);
+                            return true;
+                        }))
 
                 .item(10, new SliderItem()
                         .initial(console.get() ? 0 : 1)
                         .add(0, new Item(Material.LIME_STAINED_GLASS_PANE, "<green><bold>Console")
-                                .lore("<gray>Console can execute this command"), (menu, event) -> console.set(true))
+                                .lore("<gray>Console can execute this command"), (event) -> {
+                            console.set(true);
+                            return true;
+                        })
                         .add(1, new Item(Material.RED_STAINED_GLASS_PANE, "<red><bold>Console")
-                                .lore("<gray>Console can't execute this command"), (menu, event) -> console.set(false)))
+                                .lore("<gray>Console can't execute this command"), (event) -> {
+                            console.set(false);
+                            return true;
+                        }))
 
                 .item(26, new Item(Material.WRITABLE_BOOK, "<#2FBE6A><bold>Save changes")
                         .lore("<gray>Click to confirm.")
-                        .click((menu, event) -> {
+                        .click((event) -> {
                             if (players.get() && console.get()) {
                                 CommandFactory.getProcessor().editExecutableBy(alias, Executor.BOTH);
                                 openEditor(player, alias);
@@ -275,11 +288,12 @@ public class FactoryMenu {
                                 CommandFactory.getProcessor().editExecutableBy(alias, Executor.CONSOLE);
                                 openEditor(player, alias);
                             } else {
+                                Menu menu = event.getMenu();
                                 menu.item(26, new TimedItem(new Item(Material.BARRIER, "<dark_red><bold>Invalid arguments!")
                                         .lore("<gray>You need to have someone be able to execute this command!")
-                                        .click((menu1, event1) -> {
+                                        .click((event1) -> {
 
-                                        }), menu, event, 5 * 20));
+                                        }), event, 5 * 20));
                                 menu.updateItem(26);
                             }
                         }))
@@ -323,11 +337,12 @@ public class FactoryMenu {
             int finalIndex = i;
             daysItem.add(i, new Item(Material.RED_STAINED_GLASS_PANE, "<dark_red><bold>" + i + " <dark_red>day(s)")
                             .lore("<gray>Use <dark_red>left<gray> or <dark_red>right click<gray> to add or remove days"),
-                    (menu, event) -> {
+                    (event) -> {
                         days.set(finalIndex);
                         save.lore("<green>Current total<gray>: " + formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
-                        menu.item(26, save);
-                        menu.updateItem(26);
+                        event.getMenu().item(26, save);
+                        event.getMenu().updateItem(26);
+                        return true;
                     });
         }
 
@@ -335,11 +350,12 @@ public class FactoryMenu {
             int finalIndex = i;
             hoursItem.add(i, new Item(Material.ORANGE_STAINED_GLASS_PANE, "&6<bold>" + i + " &6hour(s)")
                             .lore("<gray>Use &6left<gray> or &6right click<gray> to add or remove hours"),
-                    (menu, event) -> {
+                    (event) -> {
                         hours.set(finalIndex);
                         save.lore("<green>Current total<gray>: " + formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
-                        menu.item(26, save);
-                        menu.updateItem(26);
+                        event.getMenu().item(26, save);
+                        event.getMenu().updateItem(26);
+                        return true;
                     });
         }
 
@@ -347,11 +363,12 @@ public class FactoryMenu {
             int finalIndex = i;
             minsItem.add(i, new Item(Material.YELLOW_STAINED_GLASS_PANE, "&e<bold>" + i + " &eminute(s)")
                             .lore("<gray>Use &eleft<gray> or &eright click<gray> to add or remove minutes"),
-                    (menu, event) -> {
+                    (event) -> {
                         mins.set(finalIndex);
                         save.lore("<green>Current total<gray>: " + formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
-                        menu.item(26, save);
-                        menu.updateItem(26);
+                        event.getMenu().item(26, save);
+                        event.getMenu().updateItem(26);
+                        return true;
                     });
         }
 
@@ -359,11 +376,12 @@ public class FactoryMenu {
             int finalIndex = i;
             secsItem.add(i, new Item(Material.GREEN_STAINED_GLASS_PANE, "&2<bold>" + i + " &2second(s)")
                     .lore("<gray>Use &2left<gray> or &2right click<gray> to add or remove seconds"),
-                    (menu, event) -> {
+                    (event) -> {
                         secs.set(finalIndex);
                         save.lore("<green>Current total<gray>: " + formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
-                        menu.item(26, save);
-                        menu.updateItem(26);
+                        event.getMenu().item(26, save);
+                        event.getMenu().updateItem(26);
+                        return true;
                     });
         }
 
@@ -371,11 +389,12 @@ public class FactoryMenu {
             int finalIndex = i * 50;
             msItem.add(i, new Item(Material.LIME_STAINED_GLASS_PANE, "<green><bold>" + finalIndex + " <green>millisecond(s)")
                     .lore("<gray>Use <green>left<gray> or <green>right click<gray> to add or remove milliseconds"),
-                    (menu, event) -> {
+                    (event) -> {
                         ms.set(finalIndex);
                         save.lore("<green>Current total<gray>: " + formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
-                        menu.item(26, save);
-                        menu.updateItem(26);
+                        event.getMenu().item(26, save);
+                        event.getMenu().updateItem(26);
+                        return true;
                     });
         }
 
@@ -386,7 +405,7 @@ public class FactoryMenu {
                 .item(12, secsItem)
                 .item(13, msItem)
                 .item(26, save
-                        .click((menu, event) -> {
+                        .click((event) -> {
                             CommandFactory.getProcessor().editCooldown(alias, getDuration(days, hours, mins, secs, ms));
                             openEditor(player, alias);
                         }))
@@ -405,49 +424,53 @@ public class FactoryMenu {
 
                         .add(0, new Item(Material.LIME_STAINED_GLASS_PANE, "<green><bold>Verbosing enabled")
                                         .lore("<gray>You will receive more",  "<gray>information in the console."),
-                                (menu, event) -> {
+                                (event) -> {
                                     Option.VERBOSE = new ConfigOption<>(true);
                                     CommandFactory.setVerbosing(true);
+                                    return true;
                                 })
 
                         .add(1, new Item(Material.RED_STAINED_GLASS_PANE, "<red><bold>Verbosing disabled")
                                         .lore("<gray>You will receive very little", "<gray>information in the console."),
-                                (menu, event) -> {
+                                (event) -> {
                                     Option.VERBOSE = new ConfigOption<>(false);
                                     CommandFactory.setVerbosing(false);
+                                    return true;
                                 }))
 
                 .item(10, new Item(Material.CLOCK, "&b<bold>Reset cooldowns")
                         .lore("<gray>This will reset all active cooldowns.")
-                        .click((menu, event) -> {
+                        .click((event) -> {
+                            Menu menu = event.getMenu();
                             menu.item(event.getSlot(), new TimedItem(new Item(Material.BARRIER, "<red><bold>Are you sure?")
                                     .lore("<gray>If you click this item again,", "<gray>&nall cooldowns&r<gray> will be reset!")
-                                    .click((menu1, event1) -> {
+                                    .click((event1) -> {
                                         CommandFactory.getProcessor().resetCooldowns();
                                         Message.send(player, CommandFactory.MESSAGE_PREFIX + "Reset all cooldowns!");
-                                    }), menu, event, 20 * 5));
+                                    }), event, 20 * 5));
                             menu.updateItem(event.getSlot());
                         }))
 
                 .item(11, new Item(Material.COMPARATOR, "&b<bold>Reload files")
                         .lore("<gray>This will reload all files.")
-                        .click((menu, event) -> {
+                        .click((event) -> {
+                            Menu menu = event.getMenu();
                             menu.item(event.getSlot(), new TimedItem(new Item(Material.BARRIER, "<red><bold>Are you sure?")
                                     .lore("<gray>If you click this item again,", "<gray>all files will be reloaded")
-                                    .click((menu1, event1) -> {
+                                    .click((event1) -> {
                                         player.closeInventory();
                                         Time.timerStart("reload");
                                         CommandFactory.getProcessor().unregisterAll();
                                         CommandFactory.getConfiguration().reload(true);
                                         Message.send(player, CommandFactory.MESSAGE_PREFIX + "Reloaded files in "
                                                 + Time.timerEnd("reload") + "ms!");
-                                    }), menu, event, 20 * 5));
+                                    }), event, 20 * 5));
                             menu.updateItem(event.getSlot());
                         }))
 
                 .item(26, new Item(Material.ARROW, "<red><bold>Go back")
                         .lore("<gray>Go back to the main menu")
-                        .click((menu, event) -> openMain(player)))
+                        .click((event) -> openMain(player)))
                 .fillBackground(Material.LIGHT_BLUE_STAINED_GLASS_PANE)
                 .animation(new RandomAnimation())
                 .open(player);

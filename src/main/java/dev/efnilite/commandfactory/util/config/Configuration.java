@@ -1,8 +1,8 @@
 package dev.efnilite.commandfactory.util.config;
 
+import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.efnilite.commandfactory.CommandFactory;
 import dev.efnilite.commandfactory.util.Util;
-import dev.efnilite.fycore.config.ConfigUpdater;
 import dev.efnilite.fycore.util.Logging;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

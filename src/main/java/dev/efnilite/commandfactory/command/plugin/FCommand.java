@@ -63,7 +63,7 @@ public class FCommand extends FyCommand {
                     Message.send(sender, "<gray>/cf reload <dark_gray>- cf.reload");
                     Message.send(sender, "<gray>/cf resetcooldowns <dark_gray>- cf.resetcooldowns");
                     Message.send(sender, "");
-                    Message.send(sender, "<dark_gray><strikethrough>----------------------------------");
+                    Message.send(sender, "<dark_gray><strikethrough>------------------------------------");
                     Message.send(sender, "");
                     return true;
                 case "add":

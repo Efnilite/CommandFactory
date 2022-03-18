@@ -53,10 +53,8 @@ public final class CommandFactory extends FyPlugin {
 
         factory = new CommandProcessor();
 
-        configuration.read();
-
         registerListener(new Handler());
-        registerCommand("commandfactory",  new FCommand());
+        registerCommand("commandfactory", new FCommand());
 
         Metrics metrics = new Metrics(this, 14168);
         metrics.addCustomChart(new SingleLineChart("total_alias_count", () -> factory.getMappedSize()));
@@ -66,8 +64,6 @@ public final class CommandFactory extends FyPlugin {
 
     @Override
     public void disable() {
-        configuration.save("commands");
-
         HandlerList.unregisterAll(this);
         Bukkit.getScheduler().cancelTasks(this);
     }

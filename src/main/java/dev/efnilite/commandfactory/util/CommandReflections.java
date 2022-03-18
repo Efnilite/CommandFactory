@@ -17,6 +17,11 @@ import java.util.Map;
 @ApiStatus.Internal
 public class CommandReflections {
 
+    /**
+     * Retrieves the current command map instance
+     *
+     * @return the command map instance
+     */
     public static @Nullable SimpleCommandMap retrieveMap() {
         try {
             Field field = Bukkit.getServer().getClass().getDeclaredField("commandMap");
@@ -30,6 +35,20 @@ public class CommandReflections {
         }
     }
 
+    /**
+     * Adds a command to the commandmap
+     *
+     * @param   alias
+     *          The alias
+     *
+     * @param   command
+     *          The command instance
+     *
+     * @param   map
+     *          The commandmap instance to write this to
+     *
+     * @return the command that was added
+     */
     public static Command addToKnown(String alias, Command command, CommandMap map) {
         try {
             Field field = SimpleCommandMap.class.getDeclaredField("knownCommands");

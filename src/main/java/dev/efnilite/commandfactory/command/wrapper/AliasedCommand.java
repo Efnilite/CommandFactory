@@ -1,30 +1,59 @@
 package dev.efnilite.commandfactory.command.wrapper;
 
+import com.google.gson.annotations.Expose;
+import dev.efnilite.commandfactory.CommandFactory;
 import dev.efnilite.commandfactory.command.Executor;
 import dev.efnilite.commandfactory.command.RegisterNotification;
 import dev.efnilite.fycore.util.Logging;
+import dev.efnilite.fycore.util.Task;
 import org.apache.commons.lang.time.DurationFormatUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 /**
  * Class containing all data for registered commands.
  */
 public class AliasedCommand {
 
+    @Expose
     private String mainCommand;
-    private Executor executableBy;
-    private @Nullable String permission;
-    private @Nullable String permissionMessage;
-    private @Nullable String executableByMessage;
-    private @Nullable String cooldown;
-    private @Nullable String cooldownMessage;
-    private long cooldownMs;
-    private final boolean containsReplaceableArguments;
-    private @Nullable RegisterNotification notification;
 
-    public AliasedCommand(String mainCommand, @Nullable String permission, @Nullable String permissionMessage,
+    @Expose
+    @Nullable
+    private String permission;
+
+    @Expose
+    @Nullable
+    private String permissionMessage;
+
+    @Expose
+    @Nullable
+    private String executableByMessage;
+
+    @Expose
+    @Nullable
+    private String cooldown;
+
+    @Expose
+    @Nullable
+    private String cooldownMessage;
+
+    private long cooldownMs;
+    private Executor executableBy;
+    @Nullable
+    private RegisterNotification notification;
+
+    private final String id;
+    private final boolean containsReplaceableArguments;
+
+    public AliasedCommand(String id, String mainCommand, @Nullable String permission, @Nullable String permissionMessage,
                           @Nullable String executableBy, @Nullable String executableByMessage, @Nullable String cooldown,
                           @Nullable String cooldownMessage, boolean containsReplaceableArguments) {
+        this.id = id;
         this.mainCommand = mainCommand;
         this.permission = permission;
         this.permissionMessage = permissionMessage;
@@ -39,6 +68,76 @@ public class AliasedCommand {
         this.cooldownMs = -1;
     }
 
+    /**
+     * Saves the command file
+     */
+    public void save() {
+        new Task()
+                .execute(() -> {
+                    File file = new File(CommandFactory.getInstance().getDataFolder(), "commands/" + id + ".json");
+
+                    file.mkdirs();
+                    try {
+                        file.createNewFile();
+
+                        FileWriter writer = new FileWriter(file);
+                        CommandFactory.getGson().toJson(this, writer);
+                        writer.flush();
+                        writer.close();
+                    } catch (Throwable throwable) {
+                        Logging.stack("Error while trying to save command file", "Please report this error", throwable);
+                    }
+                })
+                .async()
+                .run();
+    }
+
+    /**
+     * Deletes this command file
+     */
+    public void delete() {
+        new Task()
+                .execute(() -> {
+                    File file = new File(CommandFactory.getInstance().getDataFolder(), "commands/" + id + ".json");
+
+                    try {
+                        file.delete();
+                    } catch (Throwable throwable) {
+                        Logging.stack("Error while trying to delete command file", "Please report this error", throwable);
+                    }
+                })
+                .async()
+                .run();
+    }
+
+    /**
+     * Reads a command file
+     *
+     * @param   file
+     *          The file
+     *
+     * @return the {@link AliasedCommand} instance
+     */
+    @Nullable
+    public static AliasedCommand read(@NotNull File file) {
+        if (file.exists()) {
+            try {
+                FileReader reader = new FileReader(file);
+                AliasedCommand command = CommandFactory.getGson().fromJson(reader, AliasedCommand.class);
+                reader.close();
+                return command;
+            } catch (Throwable throwable) {
+                Logging.stack("Error while trying to save command file", "Please report this error", throwable);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the cooldown in ms
+     *
+     * @return the ms
+     */
     public long getCooldownMs() {
         if (cooldown == null) {
             return 0;
@@ -115,7 +214,7 @@ public class AliasedCommand {
 
     @Override
     public AliasedCommand clone() {
-        return new AliasedCommand(mainCommand, permission, permissionMessage, executableBy == null ? null : executableBy.name().toLowerCase(),
+        return new AliasedCommand(id, mainCommand, permission, permissionMessage, executableBy == null ? null : executableBy.name().toLowerCase(),
                 executableByMessage, cooldown, cooldownMessage, containsReplaceableArguments);
     }
 
@@ -176,5 +275,9 @@ public class AliasedCommand {
 
     public boolean containsReplaceableArguments() {
         return containsReplaceableArguments;
+    }
+
+    public String getId() {
+        return id;
     }
 }

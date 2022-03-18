@@ -90,7 +90,7 @@ public class FCommand extends FyCommand {
                     factory.unregisterAll();
                     CommandFactory.getConfiguration().reload(true);
 
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Reloaded " + CommandFactory.NAME + "<gray> in " + Time.timerEnd("reload") + "ms!");
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Reloaded CommandFactory in " + Time.timerEnd("reload") + "ms!");
                     return true;
 
                 case "resetcooldowns":

@@ -50,53 +50,13 @@ public class Configuration {
         } catch (IOException ex) {
             ex.printStackTrace();
             Logging.error("Error while trying to update config");
-        } finally {
-            reload(false);
         }
+        reload(false);
     }
 
     public void reload(boolean read) {
         files.put("commands", YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "commands.yml")));
         files.put("config", YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml")));
-
-        if (read) {
-            read();
-        }
-    }
-
-    public void read() {
-        Logging.verbose("Reading commands file");
-        FileConfiguration file = getFile("commands");
-        List<String> nodes = Util.getNode(file, "commands");
-        if (nodes == null) {
-            Logging.warn("No commands were found in commands.yml!");
-            return;
-        }
-        for (String id : nodes) {
-            String mainCommand = file.getString("commands." + id + ".command");
-            String aliasesRaw = file.getString("commands." + id + ".aliases");
-            String perm = file.getString("commands." + id + ".permission");
-            String permMsg = file.getString("commands." + id + ".permission-message");
-            String executableBy = file.getString("commands." + id + ".executable-by");
-            String executableByMessage = file.getString("commands." + id + ".executable-by-message");
-            String cooldown = file.getString("commands." + id + ".cooldown");
-            String cooldownMessage = file.getString("commands." + id + ".cooldown-message");
-            CommandFactory.getProcessor().register(aliasesRaw, mainCommand, perm, permMsg, executableBy,
-                    executableByMessage, cooldown, cooldownMessage, false, id);
-        }
-    }
-
-    public void save(String file) {
-        Logging.verbose("Saving file " + file);
-
-        file = file.replaceAll("(.|)yml", "");
-        FileConfiguration config = getFile(file);
-        try {
-            config.save(new File(plugin.getDataFolder(), file + ".yml"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            Logging.error("There was an error while trying to save file " + file);
-        }
     }
 
     /**
@@ -111,41 +71,5 @@ public class Configuration {
             config = files.get(file);
         }
         return config;
-    }
-
-    /**
-     * Gets a coloured string
-     *
-     * @param   file
-     *          The file
-     * @param   path
-     *          The path
-     *
-     * @return a coloured string
-     */
-    public @Nullable List<String> getStringList(String file, String path) {
-        List<String> string = getFile(file).getStringList(path);
-        if (string.size() == 0) {
-            return null;
-        }
-        return Util.colour(string);
-    }
-
-    /**
-     * Gets a coloured string
-     *
-     * @param   file
-     *          The file
-     * @param   path
-     *          The path
-     *
-     * @return a coloured string
-     */
-    public @Nullable String getString(String file, String path) {
-        String string = getFile(file).getString(path);
-        if (string == null) {
-            return null;
-        }
-        return Util.colour(string);
     }
 }

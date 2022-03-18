@@ -7,18 +7,21 @@ import dev.efnilite.commandfactory.util.CommandReflections;
 import dev.efnilite.commandfactory.util.Util;
 import dev.efnilite.fycore.chat.Message;
 import dev.efnilite.fycore.util.Logging;
-import dev.efnilite.fycore.util.Task;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Handles registering and dealing with executed commands.
@@ -28,19 +31,33 @@ public final class CommandProcessor implements CommandExecutor {
 
     private SimpleCommandMap map;
     private final Pattern replaceableArgumentPattern = Pattern.compile("%\\w+[-| ](\\d+)%");
-    private final FileConfiguration commands;
     private final Map<String, AliasedCommand> register;
     private final Map<String, BukkitCommand> pluginRegister;
-    private final Map<String, String> digitRegister;
     private final Map<UUID, Map<AliasedCommand, Long>> lastExecuted;
 
     public CommandProcessor() {
-        this.commands = CommandFactory.getConfiguration().getFile("commands");
         this.register = new HashMap<>();
         this.pluginRegister = new HashMap<>();
-        this.digitRegister = new HashMap<>();
         this.lastExecuted = new HashMap<>();
         this.map = CommandReflections.retrieveMap();
+
+        try {
+            List<Path> paths = Files.list(Paths.get(CommandFactory.getInstance().getDataFolder().getPath() + "/commands"))
+                    .filter((file) -> file.getFileName().endsWith(".json")) // only read json files
+                    .collect(Collectors.toList());
+
+            for (Path path : paths) {
+                AliasedCommand command = AliasedCommand.read(path.getFileName().toFile());
+                if (command == null) {
+                    continue;
+                }
+                register("", command.getMainCommand(), command.getPermission(), command.getPermissionMessage(),
+                        command.getExecutableBy().name().toLowerCase(), command.getExecutableByMessage(),
+                        command.getCooldownString(), command.getCooldownMessage(), false, command.getId());
+            }
+        } catch (Throwable throwable) {
+            Logging.stack("", "", throwable);
+        }
     }
 
     public @Nullable RegisterNotification register(String aliasesRaw, String mainCommand) {
@@ -88,10 +105,11 @@ public final class CommandProcessor implements CommandExecutor {
         String[] aliases = aliasesRaw.replace(", ", ",").split(",");
 
         Matcher matcher = replaceableArgumentPattern.matcher(mainCommand); // check replaceable args
-        AliasedCommand command = new AliasedCommand(mainCommand, perm, permMsg, executableBy, executableByMessage, cooldown, cooldownMessage, matcher.find());
         if (id == null) {
             id = Util.randomDigits(9);
         }
+
+        AliasedCommand command = new AliasedCommand(id, mainCommand, perm, permMsg, executableBy, executableByMessage, cooldown, cooldownMessage, matcher.find());
         for (String alias : aliases) { // check before registering
             if (register.containsKey(alias)) {
                 command.setNotification(RegisterNotification.ALIAS_ALREADY_EXISTS);
@@ -124,32 +142,10 @@ public final class CommandProcessor implements CommandExecutor {
                     command.setNotification(RegisterNotification.OVERRIDING_EXISTING);
                 }
             }
-
-            digitRegister.put(alias, id);
         }
 
         if (updateFile) {
-            commands.set("commands." + id + ".command", mainCommand);
-            commands.set("commands." + id + ".aliases", aliasesRaw);
-            if (perm != null) {
-                commands.set("commands." + id + ".permission", perm);
-            }
-            if (permMsg != null) {
-                commands.set("commands." + id + ".permission-message", permMsg);
-            }
-            if (executableBy != null) {
-                commands.set("commands." + id + ".executable-by", executableBy);
-            }
-            if (executableByMessage != null) {
-                commands.set("commands." + id + ".executable-by-message", executableByMessage);
-            }
-            if (cooldown != null) {
-                commands.set("commands." + id + ".cooldown", cooldown);
-            }
-            if (cooldownMessage != null) {
-                commands.set("commands." + id + ".cooldown-message", cooldownMessage);
-            }
-            saveAsync();
+            command.save();
         }
         return notification;
     }
@@ -162,27 +158,23 @@ public final class CommandProcessor implements CommandExecutor {
         Logging.verbose("Unregistering " + alias);
 
         unregisterToMap(alias);
-
-        commands.set("commands." + digitRegister.remove(alias), null);
-        saveAsync();
+        register.get(alias).delete();
 
         return register.remove(alias) != null;
     }
 
-    private void saveAsync() {
-        new Task().async()
-            .execute(() -> CommandFactory.getConfiguration().save("commands"))
-            .run();
-    }
-
+    /**
+     * Unregisters all commands
+     */
     public void unregisterAll() {
         for (String alias : new ArrayList<>(register.keySet())) {
-            unregisterToMap(alias);
-            register.remove(alias);
-            digitRegister.remove(alias);
+            unregister(alias);
         }
     }
 
+    /**
+     * Resets all cooldowns
+     */
     public void resetCooldowns() {
         lastExecuted.clear();
     }
@@ -362,9 +354,7 @@ public final class CommandProcessor implements CommandExecutor {
         command.setPermission(permission);
         register.put(alias, command); // update local
 
-        String id = digitRegister.get(alias);
-        commands.set("commands." + id + ".permission", permission); // update file
-        saveAsync();
+        command.save();
         return true;
     }
 
@@ -389,9 +379,7 @@ public final class CommandProcessor implements CommandExecutor {
         command.setMainCommand(mainCommand);
         register.put(alias, command); // update local
 
-        String id = digitRegister.get(alias);
-        commands.set("commands." + id + ".command", mainCommand); // update file
-        saveAsync();
+        command.save();
         return true;
     }
 
@@ -417,12 +405,9 @@ public final class CommandProcessor implements CommandExecutor {
         command.setExecutableBy(executor);
         register.put(alias, command); // update local
 
-        String id = digitRegister.get(alias);
-        commands.set("commands." + id + ".executable-by", name); // update file
-        saveAsync();
+        command.save();
         return true;
     }
-
 
     /**
      * Edits the message a player gets when they can't execute the command
@@ -445,9 +430,7 @@ public final class CommandProcessor implements CommandExecutor {
         command.setExecutableByMessage(message);
         register.put(alias, command); // update local
 
-        String id = digitRegister.get(alias);
-        commands.set("commands." + id + ".executable-by-message", message); // update file
-        saveAsync();
+        command.save();
         return true;
     }
 
@@ -474,9 +457,7 @@ public final class CommandProcessor implements CommandExecutor {
         Logging.verbose("Cooldown of " + alias + " changed to " + cooldown);
         register.put(alias, command); // update local
 
-        String id = digitRegister.get(alias);
-        commands.set("commands." + id + ".cooldown", cooldown); // update file
-        saveAsync();
+        command.save();
         return true;
     }
 
@@ -501,9 +482,7 @@ public final class CommandProcessor implements CommandExecutor {
         command.setCooldownMessage(message);
         register.put(alias, command); // update local
 
-        String id = digitRegister.get(alias);
-        commands.set("commands." + id + ".cooldown-message", message); // update file
-        saveAsync();
+        command.save();
         return true;
     }
 
@@ -528,12 +507,15 @@ public final class CommandProcessor implements CommandExecutor {
         command.setPermissionMessage(permissionMessage);
         register.put(alias, command); // update local
 
-        String id = digitRegister.get(alias);
-        commands.set("commands." + id + ".permission-message", permissionMessage); // update file
-        saveAsync();
+        command.save();
         return true;
     }
 
+    /**
+     * Returns the size of the registered commands
+     *
+     * @return the mapped size
+     */
     public int getMappedSize() {
         return register.size();
     }

@@ -89,7 +89,7 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>22.0.0</version>
+            <version>23.0.0</version>
             <scope>provided</scope>
         </dependency>
 
@@ -98,6 +98,19 @@
             <artifactId>fyCore</artifactId>
             <version>6940c36122</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bukkit</artifactId>
+            <version>3.0.0</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tchristofferson</groupId>
+            <artifactId>ConfigUpdater</artifactId>
+            <version>2.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

@@ -3,9 +3,9 @@ package dev.efnilite.commandfactory.command.plugin;
 import dev.efnilite.commandfactory.CommandFactory;
 import dev.efnilite.commandfactory.FactoryMenu;
 import dev.efnilite.commandfactory.command.CommandProcessor;
-import dev.efnilite.fycore.chat.Message;
-import dev.efnilite.fycore.command.FyCommand;
-import dev.efnilite.fycore.util.Time;
+import dev.efnilite.vilib.chat.Message;
+import dev.efnilite.vilib.command.ViCommand;
+import dev.efnilite.vilib.util.Time;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -18,7 +18,7 @@ import java.util.List;
  * CommandFactory main command.
  */
 @ApiStatus.Internal
-public class FCommand extends FyCommand {
+public class MainCommand extends ViCommand {
 
     private final CommandProcessor factory = CommandFactory.getProcessor();
 

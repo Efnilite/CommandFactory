@@ -1,8 +1,8 @@
 package dev.efnilite.commandfactory;
 
-import dev.efnilite.fycore.chat.Message;
-import dev.efnilite.fycore.event.EventWatcher;
-import dev.efnilite.fycore.util.Version;
+import dev.efnilite.vilib.chat.Message;
+import dev.efnilite.vilib.event.EventWatcher;
+import dev.efnilite.vilib.util.Version;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerJoinEvent;

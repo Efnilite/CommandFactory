@@ -1,7 +1,7 @@
 package dev.efnilite.commandfactory.util.config;
 
 import dev.efnilite.commandfactory.CommandFactory;
-import dev.efnilite.fycore.config.ConfigOption;
+import dev.efnilite.vilib.config.ConfigOption;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Option {

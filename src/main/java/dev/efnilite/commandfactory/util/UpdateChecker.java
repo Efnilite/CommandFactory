@@ -1,8 +1,8 @@
 package dev.efnilite.commandfactory.util;
 
 import dev.efnilite.commandfactory.CommandFactory;
-import dev.efnilite.fycore.util.Logging;
-import dev.efnilite.fycore.util.Task;
+import dev.efnilite.vilib.util.Logging;
+import dev.efnilite.vilib.util.Task;
 
 import java.io.BufferedReader;
 import java.io.IOException;

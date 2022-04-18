@@ -1,15 +1,15 @@
 package dev.efnilite.commandfactory;
 
 import dev.efnilite.commandfactory.command.CommandProcessor;
-import dev.efnilite.commandfactory.command.plugin.FCommand;
+import dev.efnilite.commandfactory.command.plugin.MainCommand;
 import dev.efnilite.commandfactory.util.UpdateChecker;
 import dev.efnilite.commandfactory.util.config.Configuration;
 import dev.efnilite.commandfactory.util.config.Option;
-import dev.efnilite.fycore.FyPlugin;
-import dev.efnilite.fycore.util.Logging;
-import dev.efnilite.fycore.util.Task;
-import dev.efnilite.fycore.util.Time;
-import dev.efnilite.fycore.util.Version;
+import dev.efnilite.vilib.ViPlugin;
+import dev.efnilite.vilib.util.Logging;
+import dev.efnilite.vilib.util.Task;
+import dev.efnilite.vilib.util.Time;
+import dev.efnilite.vilib.util.Version;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
@@ -21,7 +21,7 @@ import org.bukkit.event.HandlerList;
  * @author Efnilite
  * (c) MMXXI - MMXXII
  */
-public final class CommandFactory extends FyPlugin {
+public final class CommandFactory extends ViPlugin {
 
     private static CommandFactory instance;
     private static CommandProcessor factory;
@@ -54,7 +54,7 @@ public final class CommandFactory extends FyPlugin {
         factory = new CommandProcessor();
 
         registerListener(new Handler());
-        registerCommand("commandfactory", new FCommand());
+        registerCommand("commandfactory", new MainCommand());
 
         Metrics metrics = new Metrics(this, 14168);
         metrics.addCustomChart(new SingleLineChart("total_alias_count", () -> factory.getMappedSize()));
@@ -69,7 +69,7 @@ public final class CommandFactory extends FyPlugin {
     }
 
     public static void setVerbosing(boolean verbosing) {
-        FyPlugin.verbosing = verbosing;
+        ViPlugin.verbosing = verbosing;
     }
 
     public static Configuration getConfiguration() {

@@ -5,8 +5,8 @@ import dev.efnilite.commandfactory.command.wrapper.AliasedCommand;
 import dev.efnilite.commandfactory.command.wrapper.BukkitCommand;
 import dev.efnilite.commandfactory.util.CommandReflections;
 import dev.efnilite.commandfactory.util.Util;
-import dev.efnilite.fycore.chat.Message;
-import dev.efnilite.fycore.util.Logging;
+import dev.efnilite.vilib.chat.Message;
+import dev.efnilite.vilib.util.Logging;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -42,7 +41,13 @@ public final class CommandProcessor implements CommandExecutor {
         this.map = CommandReflections.retrieveMap();
 
         try {
-            List<Path> paths = Files.list(Paths.get(CommandFactory.getInstance().getDataFolder().getPath() + "/commands"))
+            Path commands = Paths.get(CommandFactory.getInstance().getDataFolder().getPath(), "commands");
+
+            if (!commands.toFile().exists()) { // if path does not exist, create it
+                commands.toFile().mkdirs();
+            }
+
+            List<Path> paths = Files.list(commands)
                     .filter((file) -> file.getFileName().endsWith(".json")) // only read json files
                     .collect(Collectors.toList());
 
@@ -56,7 +61,7 @@ public final class CommandProcessor implements CommandExecutor {
                         command.getCooldownString(), command.getCooldownMessage(), false, command.getId());
             }
         } catch (Throwable throwable) {
-            Logging.stack("", "", throwable);
+            Logging.stack("Error while reading commands", "Please report this error to the developer!", throwable);
         }
     }
 

@@ -1,7 +1,5 @@
-package dev.efnilite.commandfactory.command.plugin;
+package dev.efnilite.commandfactory;
 
-import dev.efnilite.commandfactory.CommandFactory;
-import dev.efnilite.commandfactory.FactoryMenu;
 import dev.efnilite.commandfactory.command.CommandProcessor;
 import dev.efnilite.vilib.chat.Message;
 import dev.efnilite.vilib.command.ViCommand;
@@ -29,16 +27,16 @@ public class MainCommand extends ViCommand {
             Message.send(sender, "<dark_gray><strikethrough>-----------<reset> " + CommandFactory.NAME + " <dark_gray><strikethrough>-----------");
             Message.send(sender, "");
             Message.send(sender, "<gray>/cf <dark_gray>- The main command");
-            Message.send(sender, "<gray>/cf permissions<dark_gray>- View all permissions");
+            if (sender.hasPermission("cf.edit")) {
+                Message.send(sender, "<gray>/cf menu/edit <dark_gray>- View all commands and edit them in the menu");
+            }
             if (sender.hasPermission("cf.edit")) {
                 Message.send(sender, "<gray>/cf add <dark_gray>- Add a command.");
             }
             if (sender.hasPermission("cf.edit")) {
-                Message.send(sender, "<gray>/cf edit <dark_gray>- View all commands and edit them in the menu");
-            }
-            if (sender.hasPermission("cf.edit")) {
                 Message.send(sender, "<gray>/cf remove <dark_gray>- Remove a command, example: /cf remove gmc");
             }
+            Message.send(sender, "<gray>/cf permissions<dark_gray>- View all permissions");
             if (sender.hasPermission("cf.reload")) {
                 Message.send(sender, "<gray>/cf reload <dark_gray>- Reload the config and commands");
             }
@@ -88,7 +86,7 @@ public class MainCommand extends ViCommand {
                     Time.timerStart("reload");
 
                     factory.unregisterAll();
-                    CommandFactory.getConfiguration().reload(true);
+                    CommandFactory.getConfiguration().reload();
 
                     Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Reloaded CommandFactory in " + Time.timerEnd("reload") + "ms!");
                     return true;

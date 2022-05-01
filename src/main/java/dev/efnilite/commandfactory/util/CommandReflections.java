@@ -1,6 +1,6 @@
 package dev.efnilite.commandfactory.util;
 
-import dev.efnilite.vilib.util.Logging;
+import dev.efnilite.commandfactory.CommandFactory;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
@@ -28,8 +28,8 @@ public class CommandReflections {
             field.setAccessible(true);
             return (SimpleCommandMap) field.get(Bukkit.getServer());
         } catch (NoSuchFieldException | IllegalAccessException ex) {
-            Logging.error("Error while trying to access the command map.");
-            Logging.error("Commands will not show up on completion.");
+            CommandFactory.logging().error("Error while trying to access the command map.");
+            CommandFactory.logging().error("Commands will not show up on completion.");
             ex.printStackTrace();
             return null;
         }
@@ -64,8 +64,8 @@ public class CommandReflections {
             return prev1 == null ? prev2 : prev1;
         } catch (IllegalAccessException  | NoSuchFieldException ex) {
             ex.printStackTrace();
-            Logging.error("There was an error while trying to register your command to the Command Map");
-            Logging.error("It might not show up in-game in the auto-complete, but it does work.");
+            CommandFactory.logging().error("There was an error while trying to register your command to the Command Map");
+            CommandFactory.logging().error("It might not show up in-game in the auto-complete, but it does work.");
             return null;
         }
     }

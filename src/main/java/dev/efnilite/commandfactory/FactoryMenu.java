@@ -223,7 +223,7 @@ public class FactoryMenu {
                                         Message.send(player, CommandFactory.MESSAGE_PREFIX + "Deleted command '" + alias + "'!");
                                         CommandFactory.getProcessor().unregister(alias);
                                         openMain(player);
-                                    }), event, 5 * 20));
+                                    }), event).stay(5 * 20));
                             menu.updateItem(event.getSlot());
                         }))
 
@@ -293,7 +293,7 @@ public class FactoryMenu {
                                         .lore("<gray>You need to have someone be able to execute this command!")
                                         .click((event1) -> {
 
-                                        }), event, 5 * 20));
+                                        }), event).stay(5 * 20));
                                 menu.updateItem(26);
                             }
                         }))
@@ -447,7 +447,7 @@ public class FactoryMenu {
                                     .click((event1) -> {
                                         CommandFactory.getProcessor().resetCooldowns();
                                         Message.send(player, CommandFactory.MESSAGE_PREFIX + "Reset all cooldowns!");
-                                    }), event, 20 * 5));
+                                    }), event).stay(20 * 5));
                             menu.updateItem(event.getSlot());
                         }))
 
@@ -461,10 +461,10 @@ public class FactoryMenu {
                                         player.closeInventory();
                                         Time.timerStart("reload");
                                         CommandFactory.getProcessor().unregisterAll();
-                                        CommandFactory.getConfiguration().reload(true);
+                                        CommandFactory.getConfiguration().reload();
                                         Message.send(player, CommandFactory.MESSAGE_PREFIX + "Reloaded files in "
                                                 + Time.timerEnd("reload") + "ms!");
-                                    }), event, 20 * 5));
+                                    }), event).stay(20 * 5));
                             menu.updateItem(event.getSlot());
                         }))
 

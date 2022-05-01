@@ -16,9 +16,7 @@
 #                                                                                               #
 #===============================================================================================#
 
-# If verbosing is enabled, useful for developers.
-verbose: false
-
-# If the update checker is enabled.
-# !! Highly recommended to be turned on !!
-updater: true
+# -= Auto updater =-.
+# Whether the auto updater should automatically download new versions when it has found one.
+# It is highly recommended to keep this enabled!
+auto-updater: true

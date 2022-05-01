@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import dev.efnilite.commandfactory.CommandFactory;
 import dev.efnilite.commandfactory.command.Executor;
 import dev.efnilite.commandfactory.command.RegisterNotification;
-import dev.efnilite.vilib.util.Logging;
 import dev.efnilite.vilib.util.Task;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
@@ -18,6 +17,9 @@ import java.io.FileWriter;
  * Class containing all data for registered commands.
  */
 public class AliasedCommand {
+
+    @Expose
+    private String aliasesRaw;
 
     @Expose
     private String mainCommand;
@@ -44,16 +46,18 @@ public class AliasedCommand {
 
     private long cooldownMs;
     private Executor executableBy;
+
     @Nullable
     private RegisterNotification notification;
 
     private final String id;
     private final boolean containsReplaceableArguments;
 
-    public AliasedCommand(String id, String mainCommand, @Nullable String permission, @Nullable String permissionMessage,
+    public AliasedCommand(String id, String aliasesRaw, String mainCommand, @Nullable String permission, @Nullable String permissionMessage,
                           @Nullable String executableBy, @Nullable String executableByMessage, @Nullable String cooldown,
                           @Nullable String cooldownMessage, boolean containsReplaceableArguments) {
         this.id = id;
+        this.aliasesRaw = aliasesRaw;
         this.mainCommand = mainCommand;
         this.permission = permission;
         this.permissionMessage = permissionMessage;
@@ -72,11 +76,11 @@ public class AliasedCommand {
      * Saves the command file
      */
     public void save() {
-        new Task()
+        Task.create(CommandFactory.getPlugin())
                 .execute(() -> {
-                    File file = new File(CommandFactory.getInstance().getDataFolder(), "commands/" + id + ".json");
+                    File file = new File(CommandFactory.getPlugin().getDataFolder(), "commands/" + id + ".json");
 
-                    file.mkdirs();
+                    file.getParentFile().mkdirs();
                     try {
                         file.createNewFile();
 
@@ -85,7 +89,7 @@ public class AliasedCommand {
                         writer.flush();
                         writer.close();
                     } catch (Throwable throwable) {
-                        Logging.stack("Error while trying to save command file", "Please report this error", throwable);
+                        CommandFactory.logging().stack("Error while trying to save command file", "Please report this error", throwable);
                     }
                 })
                 .async()
@@ -96,14 +100,14 @@ public class AliasedCommand {
      * Deletes this command file
      */
     public void delete() {
-        new Task()
+        Task.create(CommandFactory.getPlugin())
                 .execute(() -> {
-                    File file = new File(CommandFactory.getInstance().getDataFolder(), "commands/" + id + ".json");
+                    File file = new File(CommandFactory.getPlugin().getDataFolder(), "commands/" + id + ".json");
 
                     try {
                         file.delete();
                     } catch (Throwable throwable) {
-                        Logging.stack("Error while trying to delete command file", "Please report this error", throwable);
+                        CommandFactory.logging().stack("Error while trying to delete command file", "Please report this error", throwable);
                     }
                 })
                 .async()
@@ -127,7 +131,7 @@ public class AliasedCommand {
                 reader.close();
                 return command;
             } catch (Throwable throwable) {
-                Logging.stack("Error while trying to save command file", "Please report this error", throwable);
+                CommandFactory.logging().stack("Error while trying to save command file", "Please report this error", throwable);
             }
         }
         return null;
@@ -165,7 +169,7 @@ public class AliasedCommand {
                 String secs = element.replace("s", "");
                 total += (Long.parseLong(secs) * 1000); // seconds to ms
             } else {
-                Logging.error("Invalid time measurement: " + element);
+                CommandFactory.logging().error("Invalid time measurement: " + element);
             }
         }
         cooldownMs = total;
@@ -214,7 +218,7 @@ public class AliasedCommand {
 
     @Override
     public AliasedCommand clone() {
-        return new AliasedCommand(id, mainCommand, permission, permissionMessage, executableBy == null ? null : executableBy.name().toLowerCase(),
+        return new AliasedCommand(id, aliasesRaw, mainCommand, permission, permissionMessage, executableBy == null ? null : executableBy.name().toLowerCase(),
                 executableByMessage, cooldown, cooldownMessage, containsReplaceableArguments);
     }
 
@@ -244,6 +248,14 @@ public class AliasedCommand {
 
     public void setCooldownMessage(@Nullable String cooldownMessage) {
         this.cooldownMessage = cooldownMessage;
+    }
+
+    public void setAliasesRaw(String aliasesRaw) {
+        this.aliasesRaw = aliasesRaw;
+    }
+
+    public String getAliasesRaw() {
+        return aliasesRaw;
     }
 
     public String getMainCommand() {

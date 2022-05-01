@@ -1,7 +1,7 @@
 package dev.efnilite.commandfactory.util.config;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
-import dev.efnilite.vilib.util.Logging;
+import dev.efnilite.commandfactory.CommandFactory;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -27,31 +27,29 @@ public class Configuration {
         this.plugin = plugin;
         files = new HashMap<>();
 
-        String[] defaultFiles = new String[]{"config.yml", "commands.yml"};
+        String[] defaultFiles = new String[]{"config.yml"};
 
         File folder = plugin.getDataFolder();
-        if (!new File(folder, defaultFiles[0]).exists() || !new File(folder, defaultFiles[1]).exists()) {
+        if (!new File(folder, defaultFiles[0]).exists()) {
             plugin.getDataFolder().mkdirs();
 
             for (String file : defaultFiles) {
                 plugin.saveResource(file, false);
             }
-            Logging.info("Saved all config files");
+            CommandFactory.logging().info("Saved all config files");
         }
 
         // Update config
         try {
             ConfigUpdater.update(plugin, "config.yml", new File(plugin.getDataFolder(), "config.yml"), new ArrayList<>());
-            ConfigUpdater.update(plugin, "commands.yml", new File(plugin.getDataFolder(), "commands.yml"), Collections.singletonList("commands"));
         } catch (IOException ex) {
             ex.printStackTrace();
-            Logging.error("Error while trying to update config");
+            CommandFactory.logging().error("Error while trying to update config");
         }
-        reload(false);
+        reload();
     }
 
-    public void reload(boolean read) {
-        files.put("commands", YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "commands.yml")));
+    public void reload() {
         files.put("config", YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "config.yml")));
     }
 

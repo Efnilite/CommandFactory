@@ -1,18 +1,15 @@
 package dev.efnilite.commandfactory.util.config;
 
 import dev.efnilite.commandfactory.CommandFactory;
-import dev.efnilite.vilib.config.ConfigOption;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Option {
 
-    public static ConfigOption<Boolean> UPDATER;
-    public static ConfigOption<Boolean> VERBOSE;
+    public static boolean AUTO_UPDATER;
 
     public static void init() {
         FileConfiguration config = CommandFactory.getConfiguration().getFile("config");
 
-        UPDATER = new ConfigOption<>(config, "updater");
-        VERBOSE = new ConfigOption<>(config, "verbose");
+        AUTO_UPDATER = config.getBoolean("auto-updater");
     }
 }

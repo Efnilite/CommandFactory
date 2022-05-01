@@ -6,7 +6,6 @@ import dev.efnilite.commandfactory.command.wrapper.BukkitCommand;
 import dev.efnilite.commandfactory.util.CommandReflections;
 import dev.efnilite.commandfactory.util.Util;
 import dev.efnilite.vilib.chat.Message;
-import dev.efnilite.vilib.util.Logging;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.*;
@@ -14,9 +13,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,27 +40,27 @@ public final class CommandProcessor implements CommandExecutor {
         this.map = CommandReflections.retrieveMap();
 
         try {
-            Path commands = Paths.get(CommandFactory.getInstance().getDataFolder().getPath(), "commands");
+            File commands = new File(CommandFactory.getPlugin().getDataFolder().toString(), "commands");
 
-            if (!commands.toFile().exists()) { // if path does not exist, create it
-                commands.toFile().mkdirs();
+            if (!commands.exists()) { // if path does not exist, create it
+                commands.mkdirs();
             }
 
-            List<Path> paths = Files.list(commands)
-                    .filter((file) -> file.getFileName().endsWith(".json")) // only read json files
+            List<Path> paths = Files.list(commands.toPath())
+                    .filter(file -> file.getFileName().endsWith(".json")) // only read json files
                     .collect(Collectors.toList());
 
             for (Path path : paths) {
-                AliasedCommand command = AliasedCommand.read(path.getFileName().toFile());
+                AliasedCommand command = AliasedCommand.read(new File(commands.toString(), path.getFileName().toString())); // todo wtf
                 if (command == null) {
                     continue;
                 }
-                register("", command.getMainCommand(), command.getPermission(), command.getPermissionMessage(),
+                register(command.getAliasesRaw(), command.getMainCommand(), command.getPermission(), command.getPermissionMessage(),
                         command.getExecutableBy().name().toLowerCase(), command.getExecutableByMessage(),
                         command.getCooldownString(), command.getCooldownMessage(), false, command.getId());
             }
         } catch (Throwable throwable) {
-            Logging.stack("Error while reading commands", "Please report this error to the developer!", throwable);
+            CommandFactory.logging().stack("Error while reading commands", "Please report this error to the developer!", throwable);
         }
     }
 
@@ -94,18 +93,16 @@ public final class CommandProcessor implements CommandExecutor {
                             @Nullable String executableBy, @Nullable String executableByMessage, @Nullable String cooldown,
                             @Nullable String cooldownMessage, boolean updateFile, @Nullable String id) {
         if (mainCommand == null) {
-            Logging.error("Main command of alias(es) '" + aliasesRaw + "' is null.");
-            Logging.error("Please check if you have added a 'command:' section to your command.");
+            CommandFactory.logging().error("Main command of alias(es) '" + aliasesRaw + "' is null.");
+            CommandFactory.logging().error("Please check if you have added a 'command:' section to your command.");
             return RegisterNotification.ARGUMENT_NULL;
         }
         if (aliasesRaw == null) {
-            Logging.error("Alias(es) of main command '" + mainCommand + "' are null.");
-            Logging.error("Please check if you have added a 'aliases:' section to your command.");
+            CommandFactory.logging().error("Alias(es) of main command '" + mainCommand + "' are null.");
+            CommandFactory.logging().error("Please check if you have added a 'aliases:' section to your command.");
             return RegisterNotification.ARGUMENT_NULL;
         }
         this.map = CommandReflections.retrieveMap(); // update map
-
-        Logging.verbose("Registering command " + mainCommand + " under alias(es) " + aliasesRaw);
 
         String[] aliases = aliasesRaw.replace(", ", ",").split(",");
 
@@ -114,7 +111,7 @@ public final class CommandProcessor implements CommandExecutor {
             id = Util.randomDigits(9);
         }
 
-        AliasedCommand command = new AliasedCommand(id, mainCommand, perm, permMsg, executableBy, executableByMessage, cooldown, cooldownMessage, matcher.find());
+        AliasedCommand command = new AliasedCommand(id, aliasesRaw, mainCommand, perm, permMsg, executableBy, executableByMessage, cooldown, cooldownMessage, matcher.find());
         for (String alias : aliases) { // check before registering
             if (register.containsKey(alias)) {
                 command.setNotification(RegisterNotification.ALIAS_ALREADY_EXISTS);
@@ -159,8 +156,6 @@ public final class CommandProcessor implements CommandExecutor {
         if (!register.containsKey(alias)) {
             return false;
         }
-
-        Logging.verbose("Unregistering " + alias);
 
         unregisterToMap(alias);
         register.get(alias).delete();
@@ -272,8 +267,6 @@ public final class CommandProcessor implements CommandExecutor {
      *          The sender which will execute the command if they have permissions.
      */
     public void process(AliasedCommand command, AliasedCommand original, CommandSender sender) {
-        Logging.verbose("Processing " + command.getMainCommand());
-
         if (command.getExecutableBy() != null) {
             Executor executor = command.getExecutableBy();
             if (executor == Executor.CONSOLE && !(sender instanceof ConsoleCommandSender)) { // if only console can execute & sender is not console
@@ -355,7 +348,6 @@ public final class CommandProcessor implements CommandExecutor {
             return false;
         }
 
-        Logging.verbose("Permission of " + alias + " changed to " + permission);
         command.setPermission(permission);
         register.put(alias, command); // update local
 
@@ -380,7 +372,6 @@ public final class CommandProcessor implements CommandExecutor {
             return false;
         }
 
-        Logging.verbose("Main command of " + alias + " changed to " + mainCommand);
         command.setMainCommand(mainCommand);
         register.put(alias, command); // update local
 
@@ -406,7 +397,6 @@ public final class CommandProcessor implements CommandExecutor {
         }
 
         String name = executor.name().toLowerCase();
-        Logging.verbose("Executor of " + alias + " changed to " + name);
         command.setExecutableBy(executor);
         register.put(alias, command); // update local
 
@@ -431,7 +421,6 @@ public final class CommandProcessor implements CommandExecutor {
             return false;
         }
 
-        Logging.verbose("Executor message of " + alias + " changed to " + message);
         command.setExecutableByMessage(message);
         register.put(alias, command); // update local
 
@@ -459,7 +448,6 @@ public final class CommandProcessor implements CommandExecutor {
         command.setCooldownMs(ms);
         String cooldown = command.getCooldownString();
 
-        Logging.verbose("Cooldown of " + alias + " changed to " + cooldown);
         register.put(alias, command); // update local
 
         command.save();
@@ -483,7 +471,6 @@ public final class CommandProcessor implements CommandExecutor {
             return false;
         }
 
-        Logging.verbose("Cooldown message of " + alias + " changed to " + message);
         command.setCooldownMessage(message);
         register.put(alias, command); // update local
 
@@ -508,7 +495,6 @@ public final class CommandProcessor implements CommandExecutor {
             return false;
         }
 
-        Logging.verbose("Permission message of " + alias + " changed to " + permissionMessage);
         command.setPermissionMessage(permissionMessage);
         register.put(alias, command); // update local
 

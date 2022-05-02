@@ -78,9 +78,10 @@ public class AliasedCommand {
     public void save() {
         Task.create(CommandFactory.getPlugin())
                 .execute(() -> {
-                    File file = new File(CommandFactory.getPlugin().getDataFolder(), "commands/" + id + ".json");
+                    File folder = new File(CommandFactory.getPlugin().getDataFolder(), "commands");
+                    File file = new File(folder, id + ".json");
 
-                    file.getParentFile().mkdirs();
+                    folder.mkdirs();
                     try {
                         file.createNewFile();
 

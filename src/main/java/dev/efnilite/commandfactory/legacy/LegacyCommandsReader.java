@@ -24,7 +24,7 @@ public class LegacyCommandsReader {
         Task.create(CommandFactory.getPlugin())
                 .async()
                 .execute(() -> {
-                    FileConfiguration configuration = CommandFactory.getConfiguration().getFile("commands.yml");
+                    FileConfiguration configuration = CommandFactory.getConfiguration().getFile(file.toString());
                     List<String> nodes = Util.getNode(configuration, "commands");
 
                     if (nodes == null) {
@@ -41,7 +41,7 @@ public class LegacyCommandsReader {
                         String cooldown = configuration.getString("commands." + id + ".cooldown");
                         String cooldownMessage = configuration.getString("commands." + id + ".cooldown-message");
                         CommandFactory.getProcessor().register(aliasesRaw, mainCommand, perm, permMsg, executableBy,
-                                executableByMessage, cooldown, cooldownMessage, false, null);
+                                executableByMessage, cooldown, cooldownMessage, true, null);
                     }
 
                     file.delete();

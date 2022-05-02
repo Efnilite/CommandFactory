@@ -40,15 +40,16 @@ public final class CommandProcessor implements CommandExecutor {
         this.map = CommandReflections.retrieveMap();
 
         try {
-            File commands = new File(CommandFactory.getPlugin().getDataFolder().toString(), "commands");
+            File commands = new File(CommandFactory.getPlugin().getDataFolder(), "commands");
 
             if (!commands.exists()) { // if path does not exist, create it
                 commands.mkdirs();
             }
 
             List<Path> paths = Files.list(commands.toPath())
-                    .filter(file -> file.getFileName().endsWith(".json")) // only read json files
+                    .filter(file -> file.getFileName().toString().endsWith(".json")) // only read json files
                     .collect(Collectors.toList());
+
 
             for (Path path : paths) {
                 AliasedCommand command = AliasedCommand.read(new File(commands.toString(), path.getFileName().toString())); // todo wtf
@@ -65,7 +66,8 @@ public final class CommandProcessor implements CommandExecutor {
     }
 
     public @Nullable RegisterNotification register(String aliasesRaw, String mainCommand) {
-        return register(aliasesRaw, mainCommand, null, null, null, null, null, null, true, null);
+        return register(aliasesRaw, mainCommand, null, null, null,
+                null, null, null, true, null);
     }
 
     /**

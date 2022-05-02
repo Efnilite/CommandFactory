@@ -419,25 +419,6 @@ public class FactoryMenu {
         Menu settingsMenu = new Menu(3, "&fSettings");
         settingsMenu
                 .distributeRowEvenly(1)
-                .item(9, new SliderItem()
-                        .initial(Option.VERBOSE.get() ? 0 : 1)
-
-                        .add(0, new Item(Material.LIME_STAINED_GLASS_PANE, "<green><bold>Verbosing enabled")
-                                        .lore("<gray>You will receive more",  "<gray>information in the console."),
-                                (event) -> {
-                                    Option.VERBOSE = new ConfigOption<>(true);
-                                    CommandFactory.setVerbosing(true);
-                                    return true;
-                                })
-
-                        .add(1, new Item(Material.RED_STAINED_GLASS_PANE, "<red><bold>Verbosing disabled")
-                                        .lore("<gray>You will receive very little", "<gray>information in the console."),
-                                (event) -> {
-                                    Option.VERBOSE = new ConfigOption<>(false);
-                                    CommandFactory.setVerbosing(false);
-                                    return true;
-                                }))
-
                 .item(10, new Item(Material.CLOCK, "&b<bold>Reset cooldowns")
                         .lore("<gray>This will reset all active cooldowns.")
                         .click((event) -> {

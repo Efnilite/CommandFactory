@@ -33,14 +33,13 @@ public final class CommandFactory extends ViPlugin {
     @Override
     public void enable() {
         instance = this;
+
         Time.timerStart("enable");
 
         logging.info("Registered under version " + Version.getPrettyVersion());
 
         configuration = new Configuration(this);
         Option.init();
-
-        elevator = new GitElevator("Efnilite/CommandFactory", this, VersionComparator.FROM_SEMANTIC, Option.AUTO_UPDATER);
 
         factory = new CommandProcessor();
 
@@ -51,6 +50,8 @@ public final class CommandFactory extends ViPlugin {
         metrics.addCustomChart(new SingleLineChart("total_alias_count", () -> factory.getMappedSize()));
 
         LegacyCommandsReader.check();
+
+        elevator = new GitElevator("Efnilite/CommandFactory", this, VersionComparator.FROM_SEMANTIC, Option.AUTO_UPDATER);
 
         logging.info("Loaded CommandFactory in " + Time.timerEnd("enable") + "ms");
     }

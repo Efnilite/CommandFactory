@@ -18,7 +18,7 @@ import java.util.List;
 @ApiStatus.Internal
 public class MainCommand extends ViCommand {
 
-    private final CommandProcessor factory = CommandFactory.getProcessor();
+    private final CommandProcessor processor = CommandFactory.getProcessor();
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
@@ -85,8 +85,9 @@ public class MainCommand extends ViCommand {
                     }
                     Time.timerStart("reload");
 
-                    factory.unregisterAll();
+                    processor.unregisterAll();
                     CommandFactory.getConfiguration().reload();
+                    processor.registerAll();
 
                     Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Reloaded CommandFactory in " + Time.timerEnd("reload") + "ms!");
                     return true;
@@ -112,7 +113,7 @@ public class MainCommand extends ViCommand {
                         return true;
                     }
                     String alias = args[1];
-                    boolean success = factory.unregister(alias);
+                    boolean success = processor.unregister(alias);
                     if (success) {
                         Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Removed '" + alias + "'!");
                     } else {

@@ -23,7 +23,7 @@ public class Handler implements EventWatcher {
                 Message.send(player, "");
                 Message.send(player,
                         CommandFactory.MESSAGE_PREFIX + "Your version is outdated. " +
-                                "Please <underline>visit the Spigot page<reset><gray> to update.");
+                                "Please visit the Spigot page to update.");
                 Message.send(player, "");
             } else {
                 Message.send(player, "");

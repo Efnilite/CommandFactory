@@ -440,11 +440,7 @@ public class FactoryMenu {
                                     .lore("<gray>If you click this item again,", "<gray>all files will be reloaded")
                                     .click((event1) -> {
                                         player.closeInventory();
-                                        Time.timerStart("reload");
-                                        CommandFactory.getProcessor().unregisterAll();
-                                        CommandFactory.getConfiguration().reload();
-                                        Message.send(player, CommandFactory.MESSAGE_PREFIX + "Reloaded files in "
-                                                + Time.timerEnd("reload") + "ms!");
+                                        player.performCommand("commandfactory reload");
                                     }), event).stay(20 * 5));
                             menu.updateItem(event.getSlot());
                         }))

@@ -39,6 +39,10 @@ public final class CommandProcessor implements CommandExecutor {
         this.lastExecuted = new HashMap<>();
         this.map = CommandReflections.retrieveMap();
 
+        registerAll();
+    }
+
+    public void registerAll() {
         try {
             File commands = new File(CommandFactory.getPlugin().getDataFolder(), "commands");
 
@@ -52,10 +56,12 @@ public final class CommandProcessor implements CommandExecutor {
 
 
             for (Path path : paths) {
-                AliasedCommand command = AliasedCommand.read(new File(commands.toString(), path.getFileName().toString())); // todo wtf
+                AliasedCommand command = AliasedCommand.read(new File(commands.toString(), path.getFileName().toString()));
+
                 if (command == null) {
                     continue;
                 }
+
                 register(command.getAliasesRaw(), command.getMainCommand(), command.getPermission(), command.getPermissionMessage(),
                         command.getExecutableBy().name().toLowerCase(), command.getExecutableByMessage(),
                         command.getCooldownString(), command.getCooldownMessage(), false, command.getId());

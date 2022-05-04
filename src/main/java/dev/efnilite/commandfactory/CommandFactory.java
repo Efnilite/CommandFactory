@@ -25,7 +25,7 @@ public final class CommandFactory extends ViPlugin {
 
     private static GitElevator elevator;
     private static CommandFactory instance;
-    private static CommandProcessor factory;
+    private static CommandProcessor processor;
     private static Configuration configuration;
     public static final String NAME = "<gradient:#7F00FF>CommandFactory</gradient:#007FFF>";
     public static final String MESSAGE_PREFIX = NAME + " <#7B7B7B>» <gray>";
@@ -41,13 +41,13 @@ public final class CommandFactory extends ViPlugin {
         configuration = new Configuration(this);
         Option.init();
 
-        factory = new CommandProcessor();
+        processor = new CommandProcessor();
 
         registerListener(new Handler());
         registerCommand("commandfactory", new MainCommand());
 
         Metrics metrics = new Metrics(this, 14168);
-        metrics.addCustomChart(new SingleLineChart("total_alias_count", () -> factory.getMappedSize()));
+        metrics.addCustomChart(new SingleLineChart("total_alias_count", () -> processor.getMappedSize()));
 
         LegacyCommandsReader.check();
 
@@ -89,6 +89,6 @@ public final class CommandFactory extends ViPlugin {
     }
 
     public static CommandProcessor getProcessor() {
-        return factory;
+        return processor;
     }
 }

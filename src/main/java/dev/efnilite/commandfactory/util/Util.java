@@ -1,7 +1,5 @@
 package dev.efnilite.commandfactory.util;
 
-import dev.efnilite.vilib.chat.Message;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.Nullable;
@@ -9,42 +7,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 
 public class Util {
 
     private static final char[] RANDOM_DIGITS = "1234567890".toCharArray();
-
-    /**
-     * Colors strings
-     *
-     * @param   strings
-     *          The strings
-     *
-     * @return the strings
-     */
-    public static String[] colour(String... strings) {
-        String[] ret = new String[strings.length];
-        int i = 0;
-        for (String string : strings) {
-            ret[i++] = Util.colour(string);
-        }
-        return ret;
-    }
-
-    /**
-     * Colours a list
-     *
-     * @param   strings
-     *          The strings
-     *
-     * @return the coloured string
-     */
-    public static List<String> colour(List<String> strings) {
-        return strings.stream()
-                .map(Util::colour)
-                .collect(Collectors.toList());
-    }
 
     /**
      * Random digits
@@ -57,16 +23,6 @@ public class Util {
             random.append(RANDOM_DIGITS[ThreadLocalRandom.current().nextInt(RANDOM_DIGITS.length - 1)]);
         }
         return random.toString();
-    }
-
-    /**
-     * Color something
-     */
-    public static String colour(String string) {
-        if (string.equals("")) {
-            return string;
-        }
-        return ChatColor.translateAlternateColorCodes('&', Message.parseFormatting(string));
     }
 
     /**

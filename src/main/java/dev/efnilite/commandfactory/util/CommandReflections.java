@@ -36,7 +36,7 @@ public class CommandReflections {
     }
 
     /**
-     * Adds a command to the commandmap
+     * Adds a command to the Command Map
      *
      * @param   alias
      *          The alias

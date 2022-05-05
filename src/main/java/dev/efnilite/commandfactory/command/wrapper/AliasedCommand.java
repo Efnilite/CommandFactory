@@ -217,8 +217,7 @@ public class AliasedCommand {
         return notification;
     }
 
-    @Override
-    public AliasedCommand clone() {
+    public AliasedCommand copy() {
         return new AliasedCommand(id, aliasesRaw, mainCommand, permission, permissionMessage, executableBy == null ? null : executableBy.name().toLowerCase(),
                 executableByMessage, cooldown, cooldownMessage, containsReplaceableArguments);
     }
@@ -249,10 +248,6 @@ public class AliasedCommand {
 
     public void setCooldownMessage(@Nullable String cooldownMessage) {
         this.cooldownMessage = cooldownMessage;
-    }
-
-    public void setAliasesRaw(String aliasesRaw) {
-        this.aliasesRaw = aliasesRaw;
     }
 
     public String getAliasesRaw() {

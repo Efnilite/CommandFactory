@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Handles registering and dealing with executed commands.
@@ -43,19 +44,16 @@ public final class CommandProcessor implements CommandExecutor {
     }
 
     public void registerAll() {
-        try {
-            File commands = new File(CommandFactory.getPlugin().getDataFolder(), "commands");
+        File commands = new File(CommandFactory.getPlugin().getDataFolder(), "commands");
 
-            if (!commands.exists()) { // if path does not exist, create it
-                commands.mkdirs();
-            }
+        if (!commands.exists()) { // if path does not exist, create it
+            commands.mkdirs();
+        }
 
-            List<Path> paths = Files.list(commands.toPath())
-                    .filter(file -> file.getFileName().toString().endsWith(".json")) // only read json files
-                    .collect(Collectors.toList());
+        try (Stream<Path> paths = Files.list(commands.toPath())
+                .filter(file -> file.getFileName().toString().endsWith(".json"))) { // only read json files
 
-
-            for (Path path : paths) {
+            for (Path path : paths.collect(Collectors.toList())) {
                 AliasedCommand command = AliasedCommand.read(new File(commands.toString(), path.getFileName().toString()));
 
                 if (command == null) {
@@ -244,7 +242,7 @@ public final class CommandProcessor implements CommandExecutor {
             if (command == null) {
                 return false;
             }
-            command = command.clone();
+            command = command.copy();
             String mainCommand = command.getMainCommand();
 
             Matcher matcher = replaceableArgumentPattern.matcher(mainCommand);
@@ -279,13 +277,13 @@ public final class CommandProcessor implements CommandExecutor {
             Executor executor = command.getExecutableBy();
             if (executor == Executor.CONSOLE && !(sender instanceof ConsoleCommandSender)) { // if only console can execute & sender is not console
                 if (command.getExecutableByMessage() != null) {
-                    sender.sendMessage(Util.colour(command.getExecutableByMessage()));
+                    sender.sendMessage(Message.parseFormatting(command.getExecutableByMessage()));
                 }
                 return;
             }
             if (executor == Executor.PLAYER && !(sender instanceof Player)) {
                 if (command.getExecutableByMessage() != null) {
-                    sender.sendMessage(Util.colour(command.getExecutableByMessage()));
+                    sender.sendMessage(Message.parseFormatting(command.getExecutableByMessage()));
                 }
                 return;
             }
@@ -293,7 +291,7 @@ public final class CommandProcessor implements CommandExecutor {
 
         if (command.getPermission() != null && !sender.hasPermission(command.getPermission())) {
             if (command.getPermissionMessage() != null) {
-                sender.sendMessage(Util.colour(command.getPermissionMessage()));
+                sender.sendMessage(Message.parseFormatting(command.getPermissionMessage()));
             }
             return;
         }
@@ -311,7 +309,7 @@ public final class CommandProcessor implements CommandExecutor {
                     long cooldown = command.getCooldownMs();
                     if (lastUsedAgo < cooldown) { // 101 < 100??
                         if (command.getCooldownMessage() != null) {
-                            sender.sendMessage(Util.colour(command.getCooldownMessage()
+                            sender.sendMessage(Message.parseFormatting(command.getCooldownMessage()
                                     .replace("%cooldown%", DurationFormatUtils.formatDurationWords(cooldown, true, false))
                                     .replace("%time%", DurationFormatUtils.formatDurationWords(cooldown - lastUsedAgo, true, false))));
                         }
@@ -404,7 +402,6 @@ public final class CommandProcessor implements CommandExecutor {
             return false;
         }
 
-        String name = executor.name().toLowerCase();
         command.setExecutableBy(executor);
         register.put(alias, command); // update local
 
@@ -454,8 +451,6 @@ public final class CommandProcessor implements CommandExecutor {
         }
 
         command.setCooldownMs(ms);
-        String cooldown = command.getCooldownString();
-
         register.put(alias, command); // update local
 
         command.save();

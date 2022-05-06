@@ -32,12 +32,10 @@ public final class CommandFactory extends ViPlugin {
 
     @Override
     public void enable() {
-        instance = this;
-
-        Time.timerStart("enable");
+        Time.timerStart("enableCF");
 
         logging.info("Registered under version " + Version.getPrettyVersion());
-
+        instance = this;
         configuration = new Configuration(this);
         Option.init();
 
@@ -53,7 +51,7 @@ public final class CommandFactory extends ViPlugin {
 
         elevator = new GitElevator("Efnilite/CommandFactory", this, VersionComparator.FROM_SEMANTIC, Option.AUTO_UPDATER);
 
-        logging.info("Loaded CommandFactory in " + Time.timerEnd("enable") + "ms");
+        logging.info("Loaded CommandFactory in " + Time.timerEnd("enableCF") + "ms");
     }
 
     @Override

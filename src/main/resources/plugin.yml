@@ -1,8 +1,8 @@
 name: CommandFactory
 author: Efnilite
-description: Add commands within seconds
+description: Easily manage commands. Add one within seconds.
 main: dev.efnilite.commandfactory.CommandFactory
-version: 1.1.2
+version: 1.1.3
 api-version: 1.16
 depend: [vilib]
 commands:

@@ -3,7 +3,7 @@ package dev.efnilite.commandfactory.command;
 import dev.efnilite.commandfactory.CommandFactory;
 import dev.efnilite.commandfactory.command.wrapper.AliasedCommand;
 import dev.efnilite.commandfactory.command.wrapper.BukkitCommand;
-import dev.efnilite.commandfactory.util.CommandReflections;
+import dev.efnilite.commandfactory.util.Reflections;
 import dev.efnilite.commandfactory.util.Util;
 import dev.efnilite.vilib.chat.Message;
 import org.apache.commons.lang.time.DurationFormatUtils;
@@ -38,7 +38,7 @@ public final class CommandProcessor implements CommandExecutor {
         this.register = new HashMap<>();
         this.pluginRegister = new HashMap<>();
         this.lastExecuted = new HashMap<>();
-        this.map = CommandReflections.retrieveMap();
+        this.map = Reflections.retrieveMap();
 
         registerAll();
     }
@@ -108,7 +108,7 @@ public final class CommandProcessor implements CommandExecutor {
             CommandFactory.logging().error("Please check if you have added a 'aliases:' section to your command.");
             return RegisterNotification.ARGUMENT_NULL;
         }
-        this.map = CommandReflections.retrieveMap(); // update map
+        this.map = Reflections.retrieveMap(); // update map
 
         String[] aliases = aliasesRaw.replace(", ", ",").split(",");
 
@@ -158,6 +158,14 @@ public final class CommandProcessor implements CommandExecutor {
         return notification;
     }
 
+    /**
+     * Unregisters a specific command by its alias.
+     *
+     * @param   alias
+     *          The alias
+     *
+     * @return true if the alias was found, false if it wasn't.
+     */
     public boolean unregister(String alias) {
         if (!register.containsKey(alias)) {
             return false;
@@ -170,7 +178,7 @@ public final class CommandProcessor implements CommandExecutor {
     }
 
     /**
-     * Unregisters all commands
+     * Unregisters all known commands from memory
      */
     public void unregisterAll() {
         for (String alias : new ArrayList<>(register.keySet())) {
@@ -207,7 +215,7 @@ public final class CommandProcessor implements CommandExecutor {
         }
         pluginRegister.put(alias, pluginCommand);
 
-        return CommandReflections.addToKnown(alias, pluginCommand, map);
+        return Reflections.addToKnown(alias, pluginCommand, map);
     }
 
     /**

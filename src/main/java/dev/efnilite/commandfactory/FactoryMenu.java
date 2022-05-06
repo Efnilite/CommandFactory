@@ -53,11 +53,11 @@ public class FactoryMenu {
                         .click((event) -> mainMenu.page(-1)))
 
                 .item(30, new Item(Material.PAPER, "<#2055B8><bold>New command")
-                        .lore("<gray>Create a new command")
+                        .lore("<gray>Create a new command.")
                         .click((event) -> initNew(player)))
 
                 .item(31, new Item(Material.NOTE_BLOCK, "<#5F9DAD><bold>Settings")
-                        .lore("<gray>Open the settings menu")
+                        .lore("<gray>Open the settings menu.")
                         .click((event) -> openSettings(player)))
 
                 .item(32, new Item(Material.ARROW, "<red><bold>Close").click((event) -> player.closeInventory()))
@@ -97,8 +97,8 @@ public class FactoryMenu {
                             }
                             openEditor(pl1, alias);
                         })
-                        .cancel((pl1) -> Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Cancelled your command.")))
-                .cancel((pl) -> Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Cancelled your command."));
+                        .cancel((pl1) -> Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Cancelled registering your command.")))
+                .cancel((pl) -> Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Cancelled registering your command."));
     }
 
     public static void openEditor(Player player, String alias) {
@@ -118,7 +118,7 @@ public class FactoryMenu {
                                 .lore("<gray>This command overrides another command.",
                                         "<gray>This may cause issues with the server,",
                                         "<gray>or the plugin that owns this command.", "",
-                                        "<gray>Please <#CB7575>don't report problems or errors<gray>",
+                                        "<gray>Please <#CB7575><bold>don't report problems or errors<gray>",
                                         "<gray>with this command if you see this warning."));
             }
         }
@@ -143,7 +143,7 @@ public class FactoryMenu {
 
                 .item(10, new Item(Material.NAME_TAG, "<#91AEE2><bold>Permission")
                         .lore("<#7285A9>Currently<gray>: " + orNothing(command.getPermission()),
-                                "<gray>Set the permission by typing it.")
+                                "<gray>Set the permission to execute this command by typing it.")
                         .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Message.send(pl, CommandFactory.MESSAGE_PREFIX + "<gray>Please enter a permission. Type 'cancel' to cancel.");
@@ -435,7 +435,7 @@ public class FactoryMenu {
                         .click((event) -> {
                             Menu menu = event.getMenu();
                             menu.item(event.getSlot(), new TimedItem(new Item(Material.BARRIER, "<red><bold>Are you sure?")
-                                    .lore("<gray>If you click this item again,", "<gray>all files will be reloaded")
+                                    .lore("<gray>If you click this item again,", "<gray>all files will be reloaded!")
                                     .click((event1) -> {
                                         player.closeInventory();
                                         player.performCommand("commandfactory reload");

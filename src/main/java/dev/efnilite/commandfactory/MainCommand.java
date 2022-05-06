@@ -41,7 +41,7 @@ public class MainCommand extends ViCommand {
                 Message.send(sender, "<gray>/cf reload <dark_gray>- Reload the config and commands");
             }
             if (sender.hasPermission("cf.resetcooldowns")) {
-                Message.send(sender, "<gray>/cf resetcooldowns <dark_gray>- Reset all cooldowns. <#A00000>This contains no confirm message.");
+                Message.send(sender, "<gray>/cf resetcooldowns <dark_gray>- Reset all cooldowns. <#A00000>This has no confirm message.");
             }
             Message.send(sender, "");
             Message.send(sender, "<dark_gray><strikethrough>----------------------------------");
@@ -55,11 +55,11 @@ public class MainCommand extends ViCommand {
                     Message.send(sender, "");
                     Message.send(sender, "<dark_gray><strikethrough>-----------<reset> <gradient:#7F00FF>Permissions</gradient:#007FFF> <dark_gray><strikethrough>-----------");
                     Message.send(sender, "");
-                    Message.send(sender, "<gray>/cf add <dark_gray>- cf.edit");
-                    Message.send(sender, "<gray>/cf edit <dark_gray>- cf.edit");
-                    Message.send(sender, "<gray>/cf remove <dark_gray>- cf.edit");
-                    Message.send(sender, "<gray>/cf reload <dark_gray>- cf.reload");
-                    Message.send(sender, "<gray>/cf resetcooldowns <dark_gray>- cf.resetcooldowns");
+                    Message.send(sender, "<gray>/cf add <dark_gray>- cf.edit (for adding commands)");
+                    Message.send(sender, "<gray>/cf edit <dark_gray>- cf.edit (for editing commands)");
+                    Message.send(sender, "<gray>/cf remove <dark_gray>- cf.edit (for removing commands)");
+                    Message.send(sender, "<gray>/cf reload <dark_gray>- cf.reload (for reloading the files)");
+                    Message.send(sender, "<gray>/cf resetcooldowns <dark_gray>- cf.resetcooldowns (for resetting cooldowns)");
                     Message.send(sender, "");
                     Message.send(sender, "<dark_gray><strikethrough>------------------------------------");
                     Message.send(sender, "");
@@ -83,13 +83,13 @@ public class MainCommand extends ViCommand {
                     if (!sender.hasPermission("cf.reload")) {
                         return true;
                     }
-                    Time.timerStart("reload");
+                    Time.timerStart("reloadCF");
 
                     processor.unregisterAll();
                     CommandFactory.getConfiguration().reload();
                     processor.registerAll();
 
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Reloaded CommandFactory in " + Time.timerEnd("reload") + "ms!");
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Reloaded CommandFactory in " + Time.timerEnd("reloadCF") + "ms!");
                     return true;
 
                 case "resetcooldowns":
@@ -107,24 +107,21 @@ public class MainCommand extends ViCommand {
                     return true;
             }
         } else if (args.length == 2) {
-            switch (args[0].toLowerCase()) {
-                case "remove":
-                    if (!sender.hasPermission("cf.edit")) {
-                        return true;
-                    }
-                    String alias = args[1];
-                    boolean success = processor.unregister(alias);
-                    if (success) {
-                        Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Removed '" + alias + "'!");
-                    } else {
-                        Message.send(sender, CommandFactory.MESSAGE_PREFIX + "<red>Couldn't find '" + alias + "'!");
-                    }
+            if ("remove".equals(args[0].toLowerCase())) {
+                if (!sender.hasPermission("cf.edit")) {
                     return true;
-
-                default:
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command");
-                    return true;
+                }
+                String alias = args[1];
+                boolean success = processor.unregister(alias);
+                if (success) {
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Removed '" + alias + "'!");
+                } else {
+                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "<red>Couldn't find '" + alias + "'!");
+                }
+                return true;
             }
+            Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command");
+            return true;
         }
         return true;
     }
@@ -139,13 +136,13 @@ public class MainCommand extends ViCommand {
             if (sender.hasPermission("cf.edit")) {
                 completions.add("edit");
             }
+            completions.add("permissions");
             if (sender.hasPermission("cf.reload")) {
                 completions.add("reload");
             }
             if (sender.hasPermission("cf.resetcooldowns")) {
                 completions.add("resetcooldowns");
             }
-            completions.add("permissions");
             return completions(args[0], completions);
         } else {
             return Collections.emptyList();

@@ -15,7 +15,7 @@ import java.util.Map;
  * Reflections required to update the internal CommandMap
  */
 @ApiStatus.Internal
-public class CommandReflections {
+public class Reflections {
 
     /**
      * Retrieves the current command map instance
@@ -28,9 +28,9 @@ public class CommandReflections {
             field.setAccessible(true);
             return (SimpleCommandMap) field.get(Bukkit.getServer());
         } catch (NoSuchFieldException | IllegalAccessException ex) {
+            ex.printStackTrace();
             CommandFactory.logging().error("Error while trying to access the command map.");
             CommandFactory.logging().error("Commands will not show up on completion.");
-            ex.printStackTrace();
             return null;
         }
     }
@@ -62,8 +62,12 @@ public class CommandReflections {
             field.set(map, knownCommands);
 
             return prev1 == null ? prev2 : prev1;
-        } catch (IllegalAccessException  | NoSuchFieldException ex) {
-            ex.printStackTrace();
+        } catch (NoSuchFieldException ex) {
+            CommandFactory.logging().stack("knownCommands field not found for registry",
+                    "update your server or switch to a supported server platform", ex);
+            return null;
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
             CommandFactory.logging().error("There was an error while trying to register your command to the Command Map");
             CommandFactory.logging().error("It might not show up in-game in the auto-complete, but it does work.");
             return null;

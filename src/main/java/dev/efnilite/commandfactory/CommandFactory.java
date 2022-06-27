@@ -2,6 +2,7 @@ package dev.efnilite.commandfactory;
 
 import dev.efnilite.commandfactory.command.CommandProcessor;
 import dev.efnilite.commandfactory.legacy.LegacyCommandsReader;
+import dev.efnilite.commandfactory.util.Util;
 import dev.efnilite.commandfactory.util.config.Configuration;
 import dev.efnilite.commandfactory.util.config.Option;
 import dev.efnilite.vilib.ViPlugin;
@@ -14,6 +15,7 @@ import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.Plugin;
 
 /**
  * Main class
@@ -30,9 +32,36 @@ public final class CommandFactory extends ViPlugin {
     public static final String NAME = "<gradient:#7F00FF>CommandFactory</gradient:#007FFF>";
     public static final String MESSAGE_PREFIX = NAME + " <#7B7B7B>» <gray>";
 
+    public static final String REQUIRED_VILIB_VERSION = "1.0.7";
+
     @Override
     public void enable() {
         Time.timerStart("enableCF");
+
+        Plugin vilib = getServer().getPluginManager().getPlugin("vilib");
+        if (vilib == null || !vilib.isEnabled()) {
+            getLogger().severe("##");
+            getLogger().severe("## Infinite Parkour requires vilib to work!");
+            getLogger().severe("##");
+            getLogger().severe("## Please download it here:");
+            getLogger().severe("## https://github.com/ViStudios/vilib/releases/latest");
+            getLogger().severe("##");
+
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        if (!Util.isLatest(REQUIRED_VILIB_VERSION, vilib.getDescription().getVersion())) {
+            getLogger().severe("##");
+            getLogger().severe("## Infinite Parkour requires *a newer version* of vilib to work!");
+            getLogger().severe("##");
+            getLogger().severe("## Please download it here:");
+            getLogger().severe("## https://github.com/ViStudios/vilib/releases/latest");
+            getLogger().severe("##");
+
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         logging.info("Registered under version " + Version.getPrettyVersion());
         instance = this;

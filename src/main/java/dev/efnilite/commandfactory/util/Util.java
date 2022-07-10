@@ -41,15 +41,4 @@ public class Util {
         }
         return new ArrayList<>(section.getKeys(false));
     }
-
-    public static boolean isLatest(String latest, String current) {
-        int latestVs = Integer.parseInt(stripLatest(latest));
-        int currentVs = Integer.parseInt(stripLatest(current));
-
-        return latestVs <= currentVs;
-    }
-
-    private static String stripLatest(String string) {
-        return string.toLowerCase().replace("v", "").replace(".", "");
-    }
 }

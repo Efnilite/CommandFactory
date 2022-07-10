@@ -3,12 +3,15 @@ package dev.efnilite.commandfactory.command;
 import dev.efnilite.commandfactory.CommandFactory;
 import dev.efnilite.commandfactory.command.wrapper.AliasedCommand;
 import dev.efnilite.commandfactory.command.wrapper.BukkitCommand;
-import dev.efnilite.commandfactory.util.Reflections;
 import dev.efnilite.commandfactory.util.Util;
 import dev.efnilite.vilib.chat.Message;
+import dev.efnilite.vilib.util.Commands;
 import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +31,6 @@ import java.util.stream.Stream;
  */
 public final class CommandProcessor implements CommandExecutor {
 
-    private SimpleCommandMap map;
     private final Pattern replaceableArgumentPattern = Pattern.compile("%\\w+[-| ](\\d+)%");
     private final Map<String, AliasedCommand> register;
     private final Map<String, BukkitCommand> pluginRegister;
@@ -38,7 +40,6 @@ public final class CommandProcessor implements CommandExecutor {
         this.register = new HashMap<>();
         this.pluginRegister = new HashMap<>();
         this.lastExecuted = new HashMap<>();
-        this.map = Reflections.retrieveMap();
 
         registerAll();
     }
@@ -108,7 +109,6 @@ public final class CommandProcessor implements CommandExecutor {
             CommandFactory.logging().error("Please check if you have added a 'aliases:' section to your command.");
             return RegisterNotification.ARGUMENT_NULL;
         }
-        this.map = Reflections.retrieveMap(); // update map
 
         String[] aliases = aliasesRaw.replace(", ", ",").split(",");
 
@@ -155,6 +155,10 @@ public final class CommandProcessor implements CommandExecutor {
         if (updateFile) {
             command.save();
         }
+
+        // sync commands for players after registration
+        Commands.sync();
+
         return notification;
     }
 
@@ -215,7 +219,7 @@ public final class CommandProcessor implements CommandExecutor {
         }
         pluginRegister.put(alias, pluginCommand);
 
-        return Reflections.addToKnown(alias, pluginCommand, map);
+        return Commands.add(alias, pluginCommand);
     }
 
     /**
@@ -226,9 +230,7 @@ public final class CommandProcessor implements CommandExecutor {
      */
     public void unregisterToMap(String alias) {
         BukkitCommand command = pluginRegister.get(alias);
-        if (command != null) {
-            command.unregister(map);
-        }
+        Commands.unregister(command);
     }
 
     @Override

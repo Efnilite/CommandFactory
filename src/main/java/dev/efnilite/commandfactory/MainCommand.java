@@ -107,7 +107,7 @@ public class MainCommand extends ViCommand {
                     return true;
             }
         } else if (args.length == 2) {
-            if ("remove".equals(args[0].toLowerCase())) {
+            if ("remove".equalsIgnoreCase(args[0])) {
                 if (!sender.hasPermission("cf.edit")) {
                     return true;
                 }

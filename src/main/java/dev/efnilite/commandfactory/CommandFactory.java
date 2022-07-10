@@ -2,7 +2,6 @@ package dev.efnilite.commandfactory;
 
 import dev.efnilite.commandfactory.command.CommandProcessor;
 import dev.efnilite.commandfactory.legacy.LegacyCommandsReader;
-import dev.efnilite.commandfactory.util.Util;
 import dev.efnilite.commandfactory.util.config.Configuration;
 import dev.efnilite.commandfactory.util.config.Option;
 import dev.efnilite.vilib.ViPlugin;
@@ -31,8 +30,7 @@ public final class CommandFactory extends ViPlugin {
     private static Configuration configuration;
     public static final String NAME = "<gradient:#7F00FF>CommandFactory</gradient:#007FFF>";
     public static final String MESSAGE_PREFIX = NAME + " <#7B7B7B>» <gray>";
-
-    public static final String REQUIRED_VILIB_VERSION = "1.0.7";
+    public static final String REQUIRED_VILIB_VERSION = "1.0.9";
 
     @Override
     public void enable() {
@@ -44,19 +42,19 @@ public final class CommandFactory extends ViPlugin {
             getLogger().severe("## Infinite Parkour requires vilib to work!");
             getLogger().severe("##");
             getLogger().severe("## Please download it here:");
-            getLogger().severe("## https://github.com/ViStudios/vilib/releases/latest");
+            getLogger().severe("## https://github.com/Efnilite/vilib/releases/latest");
             getLogger().severe("##");
 
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        if (!Util.isLatest(REQUIRED_VILIB_VERSION, vilib.getDescription().getVersion())) {
+        if (!VersionComparator.FROM_SEMANTIC.isLatest(REQUIRED_VILIB_VERSION, vilib.getDescription().getVersion())) {
             getLogger().severe("##");
             getLogger().severe("## Infinite Parkour requires *a newer version* of vilib to work!");
             getLogger().severe("##");
             getLogger().severe("## Please download it here:");
-            getLogger().severe("## https://github.com/ViStudios/vilib/releases/latest");
+            getLogger().severe("## https://github.com/Efnilite/vilib/releases/latest");
             getLogger().severe("##");
 
             getServer().getPluginManager().disablePlugin(this);

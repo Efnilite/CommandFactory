@@ -41,11 +41,11 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.tchristofferson</pattern>
-                                    <shadedPattern>dev.efnilite.commandfactory.util</shadedPattern>
+                                    <shadedPattern>dev.efnilite.cf.util</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.bstats</pattern>
-                                    <shadedPattern>dev.efnilite.commandfactory.util</shadedPattern>
+                                    <shadedPattern>dev.efnilite.cf.util</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>
@@ -82,7 +82,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.18.1-R0.1-SNAPSHOT</version>
+            <version>1.19.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
 
@@ -94,9 +94,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.Efnilite</groupId>
+            <groupId>com.github.efnilite</groupId>
             <artifactId>vilib</artifactId>
-            <version>1c9c722cfd</version>
+            <version>7982e2c5c0</version>
             <scope>provided</scope>
         </dependency>
 

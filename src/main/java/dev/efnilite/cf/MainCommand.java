@@ -1,7 +1,7 @@
-package dev.efnilite.commandfactory;
+package dev.efnilite.cf;
 
-import dev.efnilite.commandfactory.command.CommandProcessor;
-import dev.efnilite.vilib.chat.Message;
+import dev.efnilite.cf.command.CommandProcessor;
+import dev.efnilite.cf.util.Util;
 import dev.efnilite.vilib.command.ViCommand;
 import dev.efnilite.vilib.util.Time;
 import org.bukkit.command.CommandSender;
@@ -19,50 +19,50 @@ import java.util.List;
 public class MainCommand extends ViCommand {
 
     private final CommandProcessor processor = CommandFactory.getProcessor();
-
+    
     @Override
     public boolean execute(CommandSender sender, String[] args) {
         if (args.length == 0) {
-            Message.send(sender, "");
-            Message.send(sender, "<dark_gray><strikethrough>-----------<reset> " + CommandFactory.NAME + " <dark_gray><strikethrough>-----------");
-            Message.send(sender, "");
-            Message.send(sender, "<gray>/cf <dark_gray>- The main command");
+            Util.send(sender, "");
+            Util.send(sender, "<dark_gray><strikethrough>-----------<reset> " + CommandFactory.NAME + " <dark_gray><strikethrough>-----------");
+            Util.send(sender, "");
+            Util.send(sender, "<gray>/cf <dark_gray>- The main command");
             if (sender.hasPermission("cf.edit")) {
-                Message.send(sender, "<gray>/cf menu/edit <dark_gray>- View all commands and edit them in the menu");
+                Util.send(sender, "<gray>/cf menu/edit <dark_gray>- View all commands and edit them in the menu");
             }
             if (sender.hasPermission("cf.edit")) {
-                Message.send(sender, "<gray>/cf add <dark_gray>- Add a command.");
+                Util.send(sender, "<gray>/cf add <dark_gray>- Add a command.");
             }
             if (sender.hasPermission("cf.edit")) {
-                Message.send(sender, "<gray>/cf remove <dark_gray>- Remove a command, example: /cf remove gmc");
+                Util.send(sender, "<gray>/cf remove <dark_gray>- Remove a command, example: /cf remove gmc");
             }
-            Message.send(sender, "<gray>/cf permissions<dark_gray>- View all permissions");
+            Util.send(sender, "<gray>/cf permissions<dark_gray>- View all permissions");
             if (sender.hasPermission("cf.reload")) {
-                Message.send(sender, "<gray>/cf reload <dark_gray>- Reload the config and commands");
+                Util.send(sender, "<gray>/cf reload <dark_gray>- Reload the config and commands");
             }
             if (sender.hasPermission("cf.resetcooldowns")) {
-                Message.send(sender, "<gray>/cf resetcooldowns <dark_gray>- Reset all cooldowns. <#A00000>This has no confirm message.");
+                Util.send(sender, "<gray>/cf resetcooldowns <dark_gray>- Reset all cooldowns. <#A00000>This has no confirm message.");
             }
-            Message.send(sender, "");
-            Message.send(sender, "<dark_gray><strikethrough>----------------------------------");
-            Message.send(sender, "");
+            Util.send(sender, "");
+            Util.send(sender, "<dark_gray><strikethrough>----------------------------------");
+            Util.send(sender, "");
             return true;
 
         } else if (args.length == 1) {
             switch (args[0].toLowerCase()) {
                 case "permissions":
 
-                    Message.send(sender, "");
-                    Message.send(sender, "<dark_gray><strikethrough>-----------<reset> <gradient:#7F00FF>Permissions</gradient:#007FFF> <dark_gray><strikethrough>-----------");
-                    Message.send(sender, "");
-                    Message.send(sender, "<gray>/cf add <dark_gray>- cf.edit (for adding commands)");
-                    Message.send(sender, "<gray>/cf edit <dark_gray>- cf.edit (for editing commands)");
-                    Message.send(sender, "<gray>/cf remove <dark_gray>- cf.edit (for removing commands)");
-                    Message.send(sender, "<gray>/cf reload <dark_gray>- cf.reload (for reloading the files)");
-                    Message.send(sender, "<gray>/cf resetcooldowns <dark_gray>- cf.resetcooldowns (for resetting cooldowns)");
-                    Message.send(sender, "");
-                    Message.send(sender, "<dark_gray><strikethrough>------------------------------------");
-                    Message.send(sender, "");
+                    Util.send(sender, "");
+                    Util.send(sender, "<dark_gray><strikethrough>-----------<reset> <gradient:#7F00FF>Permissions</gradient:#007FFF> <dark_gray><strikethrough>-----------");
+                    Util.send(sender, "");
+                    Util.send(sender, "<gray>/cf add <dark_gray>- cf.edit (for adding commands)");
+                    Util.send(sender, "<gray>/cf edit <dark_gray>- cf.edit (for editing commands)");
+                    Util.send(sender, "<gray>/cf remove <dark_gray>- cf.edit (for removing commands)");
+                    Util.send(sender, "<gray>/cf reload <dark_gray>- cf.reload (for reloading the files)");
+                    Util.send(sender, "<gray>/cf resetcooldowns <dark_gray>- cf.resetcooldowns (for resetting cooldowns)");
+                    Util.send(sender, "");
+                    Util.send(sender, "<dark_gray><strikethrough>------------------------------------");
+                    Util.send(sender, "");
                     return true;
                 case "add":
                     if (sender instanceof Player && sender.hasPermission("cf.edit")) {
@@ -77,7 +77,7 @@ public class MainCommand extends ViCommand {
                     return true;
                 case "reload":
                     if (!cooldown(sender, "reload", 500)) {
-                        Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Please wait before using that again!");
+                        Util.send(sender, CommandFactory.MESSAGE_PREFIX + "Please wait before using that again!");
                         return true;
                     }
                     if (!sender.hasPermission("cf.reload")) {
@@ -89,7 +89,7 @@ public class MainCommand extends ViCommand {
                     CommandFactory.getConfiguration().reload();
                     processor.registerAll();
 
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Reloaded CommandFactory in " + Time.timerEnd("reloadCF") + "ms!");
+                    Util.send(sender, CommandFactory.MESSAGE_PREFIX + "Reloaded CommandFactory in " + Time.timerEnd("reloadCF") + "ms!");
                     return true;
 
                 case "resetcooldowns":
@@ -99,11 +99,11 @@ public class MainCommand extends ViCommand {
 
                     CommandFactory.getProcessor().resetCooldowns();
 
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Reset all cooldowns!");
+                    Util.send(sender, CommandFactory.MESSAGE_PREFIX + "Reset all cooldowns!");
                     return true;
 
                 default:
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command");
+                    Util.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command");
                     return true;
             }
         } else if (args.length == 2) {
@@ -114,13 +114,13 @@ public class MainCommand extends ViCommand {
                 String alias = args[1];
                 boolean success = processor.unregister(alias);
                 if (success) {
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Removed '" + alias + "'!");
+                    Util.send(sender, CommandFactory.MESSAGE_PREFIX + "Removed '" + alias + "'!");
                 } else {
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "<red>Couldn't find '" + alias + "'!");
+                    Util.send(sender, CommandFactory.MESSAGE_PREFIX + "<red>Couldn't find '" + alias + "'!");
                 }
                 return true;
             }
-            Message.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command");
+            Util.send(sender, CommandFactory.MESSAGE_PREFIX + "Unknown command");
             return true;
         }
         return true;

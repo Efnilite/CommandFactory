@@ -1,6 +1,6 @@
-package dev.efnilite.commandfactory.util.config;
+package dev.efnilite.cf.util.config;
 
-import dev.efnilite.commandfactory.CommandFactory;
+import dev.efnilite.cf.CommandFactory;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class Option {

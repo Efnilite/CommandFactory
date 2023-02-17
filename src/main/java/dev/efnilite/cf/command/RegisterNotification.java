@@ -1,4 +1,4 @@
-package dev.efnilite.commandfactory.command;
+package dev.efnilite.cf.command;
 
 /**
  * Status notifications on registering a command.

@@ -1,7 +1,7 @@
-package dev.efnilite.commandfactory.legacy;
+package dev.efnilite.cf.legacy;
 
-import dev.efnilite.commandfactory.CommandFactory;
-import dev.efnilite.commandfactory.util.Util;
+import dev.efnilite.cf.CommandFactory;
+import dev.efnilite.cf.util.Util;
 import dev.efnilite.vilib.util.Task;
 import org.bukkit.configuration.file.FileConfiguration;
 

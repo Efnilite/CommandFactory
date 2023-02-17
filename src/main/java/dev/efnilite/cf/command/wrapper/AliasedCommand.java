@@ -1,11 +1,11 @@
-package dev.efnilite.commandfactory.command.wrapper;
+package dev.efnilite.cf.command.wrapper;
 
 import com.google.gson.annotations.Expose;
-import dev.efnilite.commandfactory.CommandFactory;
-import dev.efnilite.commandfactory.command.Executor;
-import dev.efnilite.commandfactory.command.RegisterNotification;
+import dev.efnilite.cf.CommandFactory;
+import dev.efnilite.cf.command.Executor;
+import dev.efnilite.cf.command.RegisterNotification;
+import dev.efnilite.cf.util.Util;
 import dev.efnilite.vilib.util.Task;
-import org.apache.commons.lang.time.DurationFormatUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -183,30 +183,7 @@ public class AliasedCommand {
      * @return the cooldown string but updated
      */
     public String getCooldownString() {
-        String[] values = DurationFormatUtils.formatDuration(cooldownMs, "dddd:HHHH:mmmm:ssss:SSSS", false).split(":");
-        StringBuilder cooldown = new StringBuilder();
-        for (int i = 0; i < 5; i++) {
-            int val = Integer.parseInt(values[i]);
-            switch (i) {
-                case 0:
-                    cooldown.append(val).append("d ");
-                    break;
-                case 1:
-                    cooldown.append(val).append("h ");
-                    break;
-                case 2:
-                    cooldown.append(val).append("m ");
-                    break;
-                case 3:
-                    cooldown.append(val).append("s ");
-                    break;
-                case 4:
-                    cooldown.append(val).append("ms");
-                    break;
-            }
-        }
-        this.cooldown = cooldown.toString();
-        return cooldown.toString();
+        return Util.formatDuration(cooldownMs);
     }
 
     public void setNotification(@Nullable RegisterNotification notification) {

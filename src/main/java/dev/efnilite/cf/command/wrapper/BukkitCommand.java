@@ -1,4 +1,4 @@
-package dev.efnilite.commandfactory.command.wrapper;
+package dev.efnilite.cf.command.wrapper;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

@@ -1,10 +1,10 @@
-package dev.efnilite.commandfactory;
+package dev.efnilite.cf;
 
-import dev.efnilite.commandfactory.command.Executor;
-import dev.efnilite.commandfactory.command.RegisterNotification;
-import dev.efnilite.commandfactory.command.wrapper.AliasedCommand;
-import dev.efnilite.vilib.chat.ChatAnswer;
-import dev.efnilite.vilib.chat.Message;
+import dev.efnilite.cf.command.Executor;
+import dev.efnilite.cf.command.RegisterNotification;
+import dev.efnilite.cf.command.wrapper.AliasedCommand;
+import dev.efnilite.cf.util.ChatAnswer;
+import dev.efnilite.cf.util.Util;
 import dev.efnilite.vilib.inventory.Menu;
 import dev.efnilite.vilib.inventory.PagedMenu;
 import dev.efnilite.vilib.inventory.animation.*;
@@ -13,7 +13,6 @@ import dev.efnilite.vilib.inventory.item.MenuItem;
 import dev.efnilite.vilib.inventory.item.SliderItem;
 import dev.efnilite.vilib.inventory.item.TimedItem;
 import dev.efnilite.vilib.util.Time;
-import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus;
@@ -70,14 +69,14 @@ public class FactoryMenu {
     public static void initNew(Player player) {
         new ChatAnswer(player, "cancel")
                 .pre((pl) -> {
-                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter the alias. " +
+                    Util.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter the alias. " +
                             "This is the other (usually shorter) version of the main command. Example: /gmc (with main command /gamemode creative). " +
                             "Type 'cancel' to cancel.");
                     pl.closeInventory();
                 })
                 .post((pl, alias) -> new ChatAnswer(player, "cancel")
                         .pre((pl1) -> {
-                            Message.send(pl1, CommandFactory.MESSAGE_PREFIX + "Please enter the main command. " +
+                            Util.send(pl1, CommandFactory.MESSAGE_PREFIX + "Please enter the main command. " +
                                     "This is the command that actually gets executed when you enter the alias. Example: /gamemode creative (with alias /gmc). " +
                                     "Type 'cancel' to cancel.");
                             pl1.closeInventory();
@@ -88,17 +87,17 @@ public class FactoryMenu {
                             if (notification != null) {
                                 switch (notification) {
                                     case ARGUMENT_NULL:
-                                        Message.send(pl, CommandFactory.MESSAGE_PREFIX + "<red>You entered a value which is null!");
+                                        Util.send(pl, CommandFactory.MESSAGE_PREFIX + "<red>You entered a value which is null!");
                                         return;
                                     case ALIAS_ALREADY_EXISTS:
-                                        Message.send(pl, CommandFactory.MESSAGE_PREFIX + "<red>That alias already exists!");
+                                        Util.send(pl, CommandFactory.MESSAGE_PREFIX + "<red>That alias already exists!");
                                         return;
                                 }
                             }
                             openEditor(pl1, alias);
                         })
-                        .cancel((pl1) -> Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Cancelled registering your command.")))
-                .cancel((pl) -> Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Cancelled registering your command."));
+                        .cancel((pl1) -> Util.send(pl, CommandFactory.MESSAGE_PREFIX + "Cancelled registering your command.")))
+                .cancel((pl) -> Util.send(pl, CommandFactory.MESSAGE_PREFIX + "Cancelled registering your command."));
     }
 
     public static void openEditor(Player player, String alias) {
@@ -132,7 +131,7 @@ public class FactoryMenu {
                                 "<gray>Set the main command by typing it.")
                         .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
-                                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "<gray>Please enter a command. Type 'cancel' to cancel.");
+                                    Util.send(pl, CommandFactory.MESSAGE_PREFIX + "<gray>Please enter a command. Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
                                 .post((pl, msg) -> {
@@ -146,7 +145,7 @@ public class FactoryMenu {
                                 "<gray>Set the permission to execute this command by typing it.")
                         .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
-                                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "<gray>Please enter a permission. Type 'cancel' to cancel.");
+                                    Util.send(pl, CommandFactory.MESSAGE_PREFIX + "<gray>Please enter a permission. Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
                                 .post((pl, msg) -> {
@@ -162,7 +161,7 @@ public class FactoryMenu {
                                 "<gray>they don't have enough permissions.")
                         .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
-                                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a permission message. " +
+                                    Util.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a permission message. " +
                                             "Use '&' or '<name>' for colours. Hex colours are supported ('<#abcde>'). Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
@@ -173,7 +172,7 @@ public class FactoryMenu {
                                 .cancel((pl) -> openEditor(pl, alias))))
 
                 .item(12, new Item(Material.CLOCK, "<#91AEE2><bold>Cooldown")
-                        .lore("<#7285A9>Currently<gray>: " + orNothing(formatDuration(command.getCooldownMs())), "<gray>Set the cooldown.")
+                        .lore("<#7285A9>Currently<gray>: " + orNothing(Util.formatDuration(command.getCooldownMs())), "<gray>Set the cooldown.")
                         .click((event) -> openCooldown(player, alias)))
 
                 .item(13, new Item(Material.GOLDEN_HORSE_ARMOR, "<#91AEE2><bold>Cooldown message")
@@ -181,7 +180,7 @@ public class FactoryMenu {
                                 "<gray>This is the message players get when", "<gray>they still have a cooldown.")
                         .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
-                                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a cooldown message. " +
+                                    Util.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a cooldown message. " +
                                             "Use '&' or '<name>' for colours. Hex colours are supported ('<#abcde>'). Use '%time%' for the remaining time." +
                                             "Use '%cooldown%' for the total cooldown time. Type 'cancel' to cancel.");
                                     pl.closeInventory();
@@ -201,7 +200,7 @@ public class FactoryMenu {
                                 "<gray>This is the message players/console get when", "<gray>they can't execute this command.")
                         .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
-                                    Message.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter an executor message. " +
+                                    Util.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter an executor message. " +
                                             "Use '&' or '<name>'. Hex colours are supported ('<#abcde>'). Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
@@ -218,7 +217,7 @@ public class FactoryMenu {
                             menu.item(event.getSlot(), new TimedItem(new Item(Material.BARRIER, "<#980F0F><bold>Are you sure?")
                                     .lore("<gray>If you click this item again,", "<gray>this command will be <underline>permanently deleted</underline><gray>!")
                                     .click((event1) -> {
-                                        Message.send(player, CommandFactory.MESSAGE_PREFIX + "Deleted command '" + alias + "'!");
+                                        Util.send(player, CommandFactory.MESSAGE_PREFIX + "Deleted command '" + alias + "'!");
                                         CommandFactory.getProcessor().unregister(alias);
                                         openMain(player);
                                     }), event).stay(5 * 20));
@@ -310,7 +309,7 @@ public class FactoryMenu {
 
         long cooldown = command.getCooldownMs();
         Item save = new Item(Material.WRITABLE_BOOK, "<#2FBE6A><bold>Save changes")
-                .lore("<green>Current total<gray>: " + formatDuration(cooldown), "<gray>Click to confirm.");
+                .lore("<green>Current total<gray>: " + Util.formatDuration(cooldown), "<gray>Click to confirm.");
 
         // Init days for items
         Duration total = Duration.ofMillis(cooldown); // get the total cooldown in ms
@@ -337,7 +336,7 @@ public class FactoryMenu {
                             .lore("<gray>Use <dark_red>left<gray> or <dark_red>right click<gray> to add or remove days"),
                     (event) -> {
                         days.set(finalIndex);
-                        save.lore("<green>Current total<gray>: " + formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
+                        save.lore("<green>Current total<gray>: " + Util.formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
                         event.getMenu().item(26, save);
                         event.getMenu().updateItem(26);
                         return true;
@@ -350,7 +349,7 @@ public class FactoryMenu {
                             .lore("<gray>Use &6left<gray> or &6right click<gray> to add or remove hours"),
                     (event) -> {
                         hours.set(finalIndex);
-                        save.lore("<green>Current total<gray>: " + formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
+                        save.lore("<green>Current total<gray>: " + Util.formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
                         event.getMenu().item(26, save);
                         event.getMenu().updateItem(26);
                         return true;
@@ -363,7 +362,7 @@ public class FactoryMenu {
                             .lore("<gray>Use &eleft<gray> or &eright click<gray> to add or remove minutes"),
                     (event) -> {
                         mins.set(finalIndex);
-                        save.lore("<green>Current total<gray>: " + formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
+                        save.lore("<green>Current total<gray>: " + Util.formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
                         event.getMenu().item(26, save);
                         event.getMenu().updateItem(26);
                         return true;
@@ -376,7 +375,7 @@ public class FactoryMenu {
                     .lore("<gray>Use &2left<gray> or &2right click<gray> to add or remove seconds"),
                     (event) -> {
                         secs.set(finalIndex);
-                        save.lore("<green>Current total<gray>: " + formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
+                        save.lore("<green>Current total<gray>: " + Util.formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
                         event.getMenu().item(26, save);
                         event.getMenu().updateItem(26);
                         return true;
@@ -389,7 +388,7 @@ public class FactoryMenu {
                     .lore("<gray>Use <green>left<gray> or <green>right click<gray> to add or remove milliseconds"),
                     (event) -> {
                         ms.set(finalIndex);
-                        save.lore("<green>Current total<gray>: " + formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
+                        save.lore("<green>Current total<gray>: " + Util.formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
                         event.getMenu().item(26, save);
                         event.getMenu().updateItem(26);
                         return true;
@@ -425,7 +424,7 @@ public class FactoryMenu {
                                     .lore("<gray>If you click this item again,", "<gray>&nall cooldowns&r<gray> will be reset!")
                                     .click((event1) -> {
                                         CommandFactory.getProcessor().resetCooldowns();
-                                        Message.send(player, CommandFactory.MESSAGE_PREFIX + "Reset all cooldowns!");
+                                        Util.send(player, CommandFactory.MESSAGE_PREFIX + "Reset all cooldowns!");
                                     }), event).stay(20 * 5));
                             menu.updateItem(event.getSlot());
                         }))
@@ -463,10 +462,5 @@ public class FactoryMenu {
                 hrs.longValue() * Time.toMillis(Time.SECONDS_PER_HOUR) +
                 mins.longValue() * Time.toMillis(Time.SECONDS_PER_MINUTE) +
                 Time.toMillis(secs.intValue()) + ms.longValue();
-    }
-
-    // formats durations
-    private static String formatDuration(long millis) {
-        return DurationFormatUtils.formatDurationWords(millis, false, true);
     }
 }

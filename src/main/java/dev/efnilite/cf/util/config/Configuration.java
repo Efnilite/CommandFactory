@@ -1,7 +1,7 @@
-package dev.efnilite.commandfactory.util.config;
+package dev.efnilite.cf.util.config;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
-import dev.efnilite.commandfactory.CommandFactory;
+import dev.efnilite.cf.CommandFactory;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;

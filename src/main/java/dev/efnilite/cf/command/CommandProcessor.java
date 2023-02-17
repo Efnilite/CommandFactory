@@ -1,12 +1,10 @@
-package dev.efnilite.commandfactory.command;
+package dev.efnilite.cf.command;
 
-import dev.efnilite.commandfactory.CommandFactory;
-import dev.efnilite.commandfactory.command.wrapper.AliasedCommand;
-import dev.efnilite.commandfactory.command.wrapper.BukkitCommand;
-import dev.efnilite.commandfactory.util.Util;
-import dev.efnilite.vilib.chat.Message;
+import dev.efnilite.cf.CommandFactory;
+import dev.efnilite.cf.command.wrapper.AliasedCommand;
+import dev.efnilite.cf.command.wrapper.BukkitCommand;
+import dev.efnilite.cf.util.Util;
 import dev.efnilite.vilib.util.Commands;
-import org.apache.commons.lang.time.DurationFormatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -259,7 +257,7 @@ public final class CommandProcessor implements CommandExecutor {
             while (matcher.find()) {
                 int index = Integer.parseInt(matcher.group(1)) - 1;
                 if (args.length <= index) {
-                    Message.send(sender, CommandFactory.MESSAGE_PREFIX + "You don't have enough arguments or you have too many!");
+                    Util.send(sender, CommandFactory.MESSAGE_PREFIX + "You don't have enough arguments or you have too many!");
                     return false;
                 }
                 String input = args[index];
@@ -287,13 +285,13 @@ public final class CommandProcessor implements CommandExecutor {
             Executor executor = command.getExecutableBy();
             if (executor == Executor.CONSOLE && !(sender instanceof ConsoleCommandSender)) { // if only console can execute & sender is not console
                 if (command.getExecutableByMessage() != null) {
-                    sender.sendMessage(Message.parseFormatting(command.getExecutableByMessage()));
+                    Util.send(sender, command.getExecutableByMessage());
                 }
                 return;
             }
             if (executor == Executor.PLAYER && !(sender instanceof Player)) {
                 if (command.getExecutableByMessage() != null) {
-                    sender.sendMessage(Message.parseFormatting(command.getExecutableByMessage()));
+                    Util.send(sender, command.getExecutableByMessage());
                 }
                 return;
             }
@@ -301,7 +299,7 @@ public final class CommandProcessor implements CommandExecutor {
 
         if (command.getPermission() != null && !sender.hasPermission(command.getPermission())) {
             if (command.getPermissionMessage() != null) {
-                sender.sendMessage(Message.parseFormatting(command.getPermissionMessage()));
+                Util.send(sender, command.getPermissionMessage());
             }
             return;
         }
@@ -319,9 +317,9 @@ public final class CommandProcessor implements CommandExecutor {
                     long cooldown = command.getCooldownMs();
                     if (lastUsedAgo < cooldown) { // 101 < 100??
                         if (command.getCooldownMessage() != null) {
-                            sender.sendMessage(Message.parseFormatting(command.getCooldownMessage()
-                                    .replace("%cooldown%", DurationFormatUtils.formatDurationWords(cooldown, true, false))
-                                    .replace("%time%", DurationFormatUtils.formatDurationWords(cooldown - lastUsedAgo, true, false))));
+                            Util.send(sender, command.getCooldownMessage()
+                                    .replace("%cooldown%", Util.formatDuration(cooldown))
+                                    .replace("%time%", Util.formatDuration(cooldown - lastUsedAgo)));
                         }
                         return;
                     }
@@ -334,16 +332,16 @@ public final class CommandProcessor implements CommandExecutor {
         try {
             boolean foundCommand = Bukkit.dispatchCommand(sender, command.getMainCommand().replaceFirst("/", "").replace("%player%", sender.getName()));
             if (!foundCommand) {
-                Message.send(sender, "<#711FDE>» &7Unknown main command: '" + command.getMainCommand() + "'");
+                Util.send(sender, "<#711FDE>» &7Unknown main command: '" + command.getMainCommand() + "'");
             }
         } catch (StackOverflowError overflow) {
-            Message.send(sender, CommandFactory.MESSAGE_PREFIX + "<red>Found infinite loop while processing command '" + command.getMainCommand() + "'");
-            Message.send(sender, "<gray>Please make sure your alias and main command are not the same.");
+            Util.send(sender, CommandFactory.MESSAGE_PREFIX + "<red>Found infinite loop while processing command '" + command.getMainCommand() + "'");
+            Util.send(sender, "<gray>Please make sure your alias and main command are not the same.");
         } catch (Throwable throwable) {
             throwable.printStackTrace();
-            Message.send(sender, CommandFactory.MESSAGE_PREFIX + "<gray>Unhandled exception while processing command '" + command.getMainCommand() + "'");
-            Message.send(sender, "<gray>(This is <underline>not</underline><gray> a problem with CommandFactory; contact the plugin developer and check the console)");
-            Message.send(sender, "<gray>Exception: " + throwable.getMessage());
+            Util.send(sender, CommandFactory.MESSAGE_PREFIX + "<gray>Unhandled exception while processing command '" + command.getMainCommand() + "'");
+            Util.send(sender, "<gray>(This is <underline>not</underline><gray> a problem with CommandFactory; contact the plugin developer and check the console)");
+            Util.send(sender, "<gray>Exception: " + throwable.getMessage());
         }
     }
 

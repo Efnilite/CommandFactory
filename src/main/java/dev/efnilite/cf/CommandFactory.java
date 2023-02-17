@@ -1,9 +1,9 @@
-package dev.efnilite.commandfactory;
+package dev.efnilite.cf;
 
-import dev.efnilite.commandfactory.command.CommandProcessor;
-import dev.efnilite.commandfactory.legacy.LegacyCommandsReader;
-import dev.efnilite.commandfactory.util.config.Configuration;
-import dev.efnilite.commandfactory.util.config.Option;
+import dev.efnilite.cf.command.CommandProcessor;
+import dev.efnilite.cf.legacy.LegacyCommandsReader;
+import dev.efnilite.cf.util.config.Configuration;
+import dev.efnilite.cf.util.config.Option;
 import dev.efnilite.vilib.ViPlugin;
 import dev.efnilite.vilib.util.Logging;
 import dev.efnilite.vilib.util.Time;
@@ -15,12 +15,13 @@ import org.bstats.charts.SingleLineChart;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Main class
  *
  * @author Efnilite
- * (c) MMXXI - MMXXII
+ * (c) MMXXI - MMXXIII
  */
 public final class CommandFactory extends ViPlugin {
 
@@ -68,7 +69,6 @@ public final class CommandFactory extends ViPlugin {
 
         processor = new CommandProcessor();
 
-        registerListener(new Handler());
         registerCommand("commandfactory", new MainCommand());
 
         Metrics metrics = new Metrics(this, 14168);
@@ -87,6 +87,11 @@ public final class CommandFactory extends ViPlugin {
         Bukkit.getScheduler().cancelTasks(this);
     }
 
+    @Override
+    public @Nullable GitElevator getElevator() {
+        return null;
+    }
+
     /**
      * Returns the {@link Logging} belonging to this plugin.
      *
@@ -103,10 +108,6 @@ public final class CommandFactory extends ViPlugin {
      */
     public static CommandFactory getPlugin() {
         return instance;
-    }
-
-    public static GitElevator getElevator() {
-        return elevator;
     }
 
     public static Configuration getConfiguration() {

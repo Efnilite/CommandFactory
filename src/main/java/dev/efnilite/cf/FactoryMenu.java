@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class FactoryMenu {
 
     public static void openMain(Player player) {
-        PagedMenu mainMenu = new PagedMenu(4, "&fCommands");
+        PagedMenu mainMenu = new PagedMenu(4, "<white>Commands");
 
         List<MenuItem> commands = new ArrayList<>();
         for (String alias : CommandFactory.getProcessor().getAliases()) {
@@ -107,7 +107,7 @@ public class FactoryMenu {
             return;
         }
 
-        Menu editor = new Menu(4, "&fEditing " + alias);
+        Menu editor = new Menu(4, "<white>Editing " + alias);
 
         RegisterNotification notification = command.getNotification();
         if (notification != null) {
@@ -162,7 +162,7 @@ public class FactoryMenu {
                         .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Util.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a permission message. " +
-                                            "Use '&' or '<name>' for colours. Hex colours are supported ('<#abcde>'). Type 'cancel' to cancel.");
+                                            "Use '<name>' for colours. Hex colours are supported ('<#abcde>'). Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
                                 .post((pl, msg) -> {
@@ -181,7 +181,7 @@ public class FactoryMenu {
                         .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Util.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter a cooldown message. " +
-                                            "Use '&' or '<name>' for colours. Hex colours are supported ('<#abcde>'). Use '%time%' for the remaining time." +
+                                            "Use '<name>' for colours. Hex colours are supported ('<#abcde>'). Use '%time%' for the remaining time." +
                                             "Use '%cooldown%' for the total cooldown time. Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
@@ -201,7 +201,7 @@ public class FactoryMenu {
                         .click((event) -> new ChatAnswer(player, "cancel")
                                 .pre((pl) -> {
                                     Util.send(pl, CommandFactory.MESSAGE_PREFIX + "Please enter an executor message. " +
-                                            "Use '&' or '<name>'. Hex colours are supported ('<#abcde>'). Type 'cancel' to cancel.");
+                                            "Use '<name>'. Hex colours are supported ('<#abcde>'). Type 'cancel' to cancel.");
                                     pl.closeInventory();
                                 })
                                 .post((pl, msg) -> {
@@ -243,7 +243,7 @@ public class FactoryMenu {
         AtomicBoolean players = new AtomicBoolean(executor == Executor.PLAYER || executor == Executor.BOTH);
         AtomicBoolean console = new AtomicBoolean(executor == Executor.CONSOLE || executor == Executor.BOTH);
 
-        new Menu(3, "&fExecutor of " + alias)
+        new Menu(3, "<white>Executor of " + alias)
                 .distributeRowEvenly(1)
 
                 .item(9, new SliderItem()
@@ -345,8 +345,8 @@ public class FactoryMenu {
 
         for (int i = 0; i < 24; i++) {
             int finalIndex = i;
-            hoursItem.add(i, new Item(Material.ORANGE_STAINED_GLASS_PANE, "&6<bold>" + i + " &6hour(s)")
-                            .lore("<gray>Use &6left<gray> or &6right click<gray> to add or remove hours"),
+            hoursItem.add(i, new Item(Material.ORANGE_STAINED_GLASS_PANE, "<gold><bold>" + i + " <gold>hour(s)")
+                            .lore("<gray>Use <gold>left<gray> or <gold>right click<gray> to add or remove hours"),
                     (event) -> {
                         hours.set(finalIndex);
                         save.lore("<green>Current total<gray>: " + Util.formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
@@ -358,8 +358,8 @@ public class FactoryMenu {
 
         for (int i = 0; i < 60; i++) {
             int finalIndex = i;
-            minsItem.add(i, new Item(Material.YELLOW_STAINED_GLASS_PANE, "&e<bold>" + i + " &eminute(s)")
-                            .lore("<gray>Use &eleft<gray> or &eright click<gray> to add or remove minutes"),
+            minsItem.add(i, new Item(Material.YELLOW_STAINED_GLASS_PANE, "<yellow><bold>" + i + " <yellow>minute(s)")
+                            .lore("<gray>Use <yellow>left<gray> or <yellow>right click<gray> to add or remove minutes"),
                     (event) -> {
                         mins.set(finalIndex);
                         save.lore("<green>Current total<gray>: " + Util.formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
@@ -371,8 +371,8 @@ public class FactoryMenu {
 
         for (int i = 0; i < 60; i++) {
             int finalIndex = i;
-            secsItem.add(i, new Item(Material.GREEN_STAINED_GLASS_PANE, "&2<bold>" + i + " &2second(s)")
-                    .lore("<gray>Use &2left<gray> or &2right click<gray> to add or remove seconds"),
+            secsItem.add(i, new Item(Material.GREEN_STAINED_GLASS_PANE, "<dark_green><bold>" + i + " <dark_green>second(s)")
+                    .lore("<gray>Use <dark_green>left<gray> or <dark_green>right click<gray> to add or remove seconds"),
                     (event) -> {
                         secs.set(finalIndex);
                         save.lore("<green>Current total<gray>: " + Util.formatDuration(getDuration(days, hours, mins, secs, ms)), "<gray>Click to confirm.");
@@ -395,7 +395,7 @@ public class FactoryMenu {
                     });
         }
 
-        new Menu(3, "&fCooldown of " + alias)
+        new Menu(3, "<white>Cooldown of " + alias)
                 .item(9, daysItem)
                 .item(10, hoursItem)
                 .item(11, minsItem)
@@ -413,15 +413,15 @@ public class FactoryMenu {
     }
 
     public static void openSettings(Player player) {
-        Menu settingsMenu = new Menu(3, "&fSettings");
+        Menu settingsMenu = new Menu(3, "<white>Settings");
         settingsMenu
                 .distributeRowEvenly(1)
-                .item(10, new Item(Material.CLOCK, "&b<bold>Reset cooldowns")
+                .item(10, new Item(Material.CLOCK, "<blue><bold>Reset cooldowns")
                         .lore("<gray>This will reset all active cooldowns.")
                         .click((event) -> {
                             Menu menu = event.getMenu();
                             menu.item(event.getSlot(), new TimedItem(new Item(Material.BARRIER, "<red><bold>Are you sure?")
-                                    .lore("<gray>If you click this item again,", "<gray>&nall cooldowns&r<gray> will be reset!")
+                                    .lore("<gray>If you click this item again,", "<gray><u> cooldowns</u><gray> will be reset!")
                                     .click((event1) -> {
                                         CommandFactory.getProcessor().resetCooldowns();
                                         Util.send(player, CommandFactory.MESSAGE_PREFIX + "Reset all cooldowns!");
@@ -429,7 +429,7 @@ public class FactoryMenu {
                             menu.updateItem(event.getSlot());
                         }))
 
-                .item(11, new Item(Material.COMPARATOR, "&b<bold>Reload files")
+                .item(11, new Item(Material.COMPARATOR, "<blue><bold>Reload files")
                         .lore("<gray>This will reload all files.")
                         .click((event) -> {
                             Menu menu = event.getMenu();

@@ -173,7 +173,7 @@ public final class CommandProcessor implements CommandExecutor {
             return false;
         }
 
-        unregisterToMap(alias);
+        unregisterFromMap(alias);
         register.get(alias).delete();
 
         return register.remove(alias) != null;
@@ -205,7 +205,9 @@ public final class CommandProcessor implements CommandExecutor {
      *          The details associated with this aliased command.
      */
     public @Nullable Command registerToMap(String alias, AliasedCommand command) {
-        alias = alias.replaceFirst("/", "");
+        if (alias.charAt(0) == '/') {
+            alias = alias.substring(1);
+        }
 
         BukkitCommand pluginCommand = new BukkitCommand(alias, this);
 
@@ -217,6 +219,8 @@ public final class CommandProcessor implements CommandExecutor {
         }
         pluginRegister.put(alias, pluginCommand);
 
+        System.out.println(pluginRegister.keySet());
+
         return Commands.add(alias, pluginCommand);
     }
 
@@ -226,8 +230,19 @@ public final class CommandProcessor implements CommandExecutor {
      * @param   alias
      *          The alias which it was registered
      */
-    public void unregisterToMap(String alias) {
+    public void unregisterFromMap(String alias) {
+        if (alias.charAt(0) == '/') {
+            alias = alias.substring(1);
+        }
+        System.out.println(alias);
+
         BukkitCommand command = pluginRegister.get(alias);
+
+        if (command == null) {
+            CommandFactory.logging().stack("Invalid command alias: " + alias, new IllegalArgumentException());
+            return;
+        }
+
         Commands.unregister(command);
     }
 
@@ -332,7 +347,7 @@ public final class CommandProcessor implements CommandExecutor {
         try {
             boolean foundCommand = Bukkit.dispatchCommand(sender, command.getMainCommand().replaceFirst("/", "").replace("%player%", sender.getName()));
             if (!foundCommand) {
-                Util.send(sender, "<#711FDE>» &7Unknown main command: '" + command.getMainCommand() + "'");
+                Util.send(sender, "<#711FDE>» <gray>Unknown main command: '" + command.getMainCommand() + "'");
             }
         } catch (StackOverflowError overflow) {
             Util.send(sender, CommandFactory.MESSAGE_PREFIX + "<red>Found infinite loop while processing command '" + command.getMainCommand() + "'");

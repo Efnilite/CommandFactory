@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.nio.file.Files;
 
 /**
  * Class containing all data for registered commands.
@@ -75,7 +76,7 @@ public class AliasedCommand {
     /**
      * Saves the command file
      */
-    public void save() {
+    public synchronized void save() {
         Task.create(CommandFactory.getPlugin())
                 .execute(() -> {
                     File folder = new File(CommandFactory.getPlugin().getDataFolder(), "commands");
@@ -100,13 +101,17 @@ public class AliasedCommand {
     /**
      * Deletes this command file
      */
-    public void delete() {
+    public synchronized void delete() {
         Task.create(CommandFactory.getPlugin())
                 .execute(() -> {
                     File file = new File(CommandFactory.getPlugin().getDataFolder(), "commands/" + id + ".json");
 
+                    if (!file.exists()) {
+                        return;
+                    }
+
                     try {
-                        file.delete();
+                        Files.delete(file.toPath());
                     } catch (Throwable throwable) {
                         CommandFactory.logging().stack("Error while trying to delete command file", "Please report this error", throwable);
                     }

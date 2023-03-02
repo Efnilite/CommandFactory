@@ -29,9 +29,9 @@ public final class CommandFactory extends ViPlugin {
     private static CommandFactory instance;
     private static CommandProcessor processor;
     private static Configuration configuration;
-    public static final String NAME = "<gradient:#7F00FF>CommandFactory</gradient:#007FFF>";
+    public static final String NAME = "<gradient:#7F00FF:#007FFF>CommandFactory</gradient>";
     public static final String MESSAGE_PREFIX = NAME + " <#7B7B7B>» <gray>";
-    public static final String REQUIRED_VILIB_VERSION = "1.0.9";
+    public static final String REQUIRED_VILIB_VERSION = "1.1.0";
 
     @Override
     public void enable() {
